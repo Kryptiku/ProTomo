@@ -48,6 +48,7 @@ class Home extends StatelessWidget {
                           GestureDetector(
                             onTap: () {
                               print('Start Timer');
+                              Navigator.pushNamed(context, '/focus');
                             },
                             child: SizedBox(
                               width: 60,

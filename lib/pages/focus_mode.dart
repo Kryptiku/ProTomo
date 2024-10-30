@@ -9,62 +9,77 @@ class FocusMode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: DialPage(),
+      home: Scaffold(
+        appBar: AppBar(title: Text("Rotating Knob")),
+        body: Center(child: RotatingKnob()),
+      ),
     );
   }
 }
 
-class DialPage extends StatefulWidget {
+class RotatingKnob extends StatefulWidget {
   @override
-  _DialPageState createState() => _DialPageState();
+  _RotatingKnobState createState() => _RotatingKnobState();
 }
 
-class _DialPageState extends State<DialPage> {
-  double rotation = 0.0; // Rotation angle in radians
-
-  Offset center = Offset.zero;
+class _RotatingKnobState extends State<RotatingKnob> {
+  double angle = 0.0; // Angle in radians for tracking the small circle's position
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Arc Motion Dial'),
-      ),
-      body: Center(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Calculate the center of the dial
-            center = Offset(constraints.maxWidth / 2, constraints.maxHeight / 2);
+    double radius = 100.0; // Radius of the larger circle
+    double orbitOffset = 30.0; // Extra space between the two circles
 
-            return GestureDetector(
-              onPanUpdate: (details) {
-                setState(() {
-                  // Calculate the angle between the center and the drag position
-                  final touchPosition = details.localPosition;
-                  rotation = _calculateAngle(center, touchPosition);
-                });
-              },
-              child: Transform.rotate(
-                angle: rotation,
-                child: Image.asset(
-                  'assets/dial.png', // Replace with your image path
-                  width: 200,
-                  height: 200,
-                ),
-              ),
-            );
-          },
+    // Calculate the position of the small circle with an added orbitOffset
+    double smallCircleX = (radius + orbitOffset) * cos(angle);
+    double smallCircleY = (radius + orbitOffset) * sin(angle);
+
+    return GestureDetector(
+      onPanUpdate: (details) {
+        // Calculate the angle based on drag position
+        Offset center = Offset(0, 0);
+        Offset position = details.localPosition - Offset(radius, radius);
+        setState(() {
+          angle = atan2(position.dy, position.dx);
+        });
+      },
+      child: Container(
+        width: (radius + orbitOffset) * 2,
+        height: (radius + orbitOffset) * 2,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Big circle
+            Image.asset(
+              'assets/big_bubble.png',
+            // Container(
+              width: radius * 2,
+              height: radius * 2,),
+            //   decoration: BoxDecoration(
+            //     shape: BoxShape.circle,
+            //     color: Colors.blue[300],
+            //   ),
+            // ),
+            // Small orbiting circle with extra space
+            Transform.translate(
+              offset: Offset(smallCircleX, smallCircleY),
+              child: Image.asset(
+                'assets/small_bubble.png',
+                width: 40,
+                height: 40,
+              )
+              // Container(
+              //   width: 30,
+              //   height: 30,
+              //   decoration: BoxDecoration(
+              //     shape: BoxShape.circle,
+              //     color: Colors.red,
+              //   ),
+              // ),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  double _calculateAngle(Offset center, Offset touchPosition) {
-    // Calculate the delta between the center and touch
-    final dx = touchPosition.dx - center.dx;
-    final dy = touchPosition.dy - center.dy;
-
-    // Calculate the angle with atan2, which gives the angle in radians
-    return atan2(dy, dx);
   }
 }
