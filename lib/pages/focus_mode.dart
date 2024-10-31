@@ -10,7 +10,7 @@ class FocusMode extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text("Rotating Knob")),
+        appBar: AppBar(title: Text("Focus")),
         body: Center(child: RotatingKnob()),
       ),
     );
