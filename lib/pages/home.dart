@@ -98,6 +98,15 @@ class Home extends StatelessWidget {
                     children: [
                       Column(
                         children: [
+                          Image.asset(
+                            'assets/buttons/coin.png',
+                            height: 45,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(
+                            width: 25,
+                            height: 25,
+                          ),
                           GestureDetector(
                               onTap: () => showClosetShop(context),
                               child: SizedBox(
@@ -107,13 +116,6 @@ class Home extends StatelessWidget {
                                   'assets/buttons/briefcase.png',
                                 ),
                               )),
-                          SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: Image.asset(
-                              'assets/buttons/settings.png',
-                            ),
-                          ),
                         ],
                       )
                     ],

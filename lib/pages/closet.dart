@@ -38,25 +38,47 @@ void showClosetShop(BuildContext context) {
                     labelColor: Colors.black,
                     indicatorColor: Colors.blue,
                     tabs: [
-                      //i cant do shit, nagkakaerror pag ini stack ko yung images might be too big? i dont know
-                      // Tab(
-                      //   child: Row(
-                      //     mainAxisSize: MainAxisSize.min,
-                      //     children: [
-                      //       Image.asset(
-                      //         '/assets/buttons/chicken.png',
-                      //         width: 20,
-                      //         height: 20,
-                      //       ),
-                      //       SizedBox(
-                      //         width: 8,
-                      //       ),
-                      //       Text('Closet'),
-                      //     ],
-                      //   ),
-                      // ),
-                      Tab(text: 'Closet'),
-                      Tab(text: 'Shop'),
+                      Tab(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Stack(
+                              children: [
+                                Image.asset(
+                                  'assets/buttons/chicken.png',
+                                  width: 40,
+                                  height: 40,
+                                ),
+                                Image.asset(
+                                  'assets/buttons/hanger.png',
+                                  width: 40,
+                                  height: 40,
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            const Text('Closet'),
+                          ],
+                        ),
+                      ),
+                      Tab(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('Shop'),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Image.asset(
+                              'assets/buttons/shop.png',
+                              width: 40,
+                              height: 40,
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                   // Tab bar view for each tab content
@@ -67,32 +89,112 @@ void showClosetShop(BuildContext context) {
                         // Closet Tab
                         Center(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                //just placeholders for now
-                                'Your Closet Items',
+                                'Closet',
                                 style: TextStyle(fontSize: 18),
                               ),
-                              Text('Closet Item 1'),
-                              Text('Closet Item 2'),
-                              Text('Closet Item 3'),
+                              Row(
+                                children: [],
+                              )
                             ],
                           ),
                         ),
                         // Shop Tab
                         Center(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
                                 'Shop Items',
                                 style: TextStyle(fontSize: 18),
                               ),
-                              // placeholders for now
-                              Text('Shop Item 1'),
-                              Text('Shop Item 2'),
-                              Text('Shop Item 3'),
+                              Row(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/chicken.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: EdgeInsets.all(10),
+                                          child: Text('40'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/chicken.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: EdgeInsets.all(10),
+                                          child: Text('10'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/chicken.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: EdgeInsets.all(10),
+                                          child: Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ),
