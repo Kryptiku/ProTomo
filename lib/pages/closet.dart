@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/home.dart';
 
-void main() => runApp(Home());
+void main() => runApp(const Home());
 
 class ClosetShop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Home(),
     );
   }
@@ -23,7 +23,7 @@ void showClosetShop(BuildContext context) {
           ),
           backgroundColor: Colors.transparent,
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/buttons/closet.png'),
                   fit: BoxFit.fitWidth),
@@ -91,12 +91,55 @@ void showClosetShop(BuildContext context) {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 'Closet',
                                 style: TextStyle(fontSize: 18),
                               ),
                               Row(
-                                children: [],
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                ],
                               )
                             ],
                           ),
@@ -106,7 +149,7 @@ void showClosetShop(BuildContext context) {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 'Shop Items',
                                 style: TextStyle(fontSize: 18),
                               ),
@@ -122,7 +165,7 @@ void showClosetShop(BuildContext context) {
                                       Positioned(
                                           top: 40,
                                           child: Container(
-                                            margin: EdgeInsets.all(10),
+                                            margin: const EdgeInsets.all(10),
                                             child: Image.asset(
                                               'assets/buttons/coin.png',
                                               height: 20,
@@ -133,8 +176,8 @@ void showClosetShop(BuildContext context) {
                                         top: 40,
                                         left: 20,
                                         child: Container(
-                                          margin: EdgeInsets.all(10),
-                                          child: Text('40'),
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('40'),
                                         ),
                                       )
                                     ],
@@ -149,7 +192,7 @@ void showClosetShop(BuildContext context) {
                                       Positioned(
                                           top: 40,
                                           child: Container(
-                                            margin: EdgeInsets.all(10),
+                                            margin: const EdgeInsets.all(10),
                                             child: Image.asset(
                                               'assets/buttons/coin.png',
                                               height: 20,
@@ -160,8 +203,8 @@ void showClosetShop(BuildContext context) {
                                         top: 40,
                                         left: 20,
                                         child: Container(
-                                          margin: EdgeInsets.all(10),
-                                          child: Text('10'),
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('10'),
                                         ),
                                       )
                                     ],
@@ -176,7 +219,7 @@ void showClosetShop(BuildContext context) {
                                       Positioned(
                                           top: 40,
                                           child: Container(
-                                            margin: EdgeInsets.all(10),
+                                            margin: const EdgeInsets.all(10),
                                             child: Image.asset(
                                               'assets/buttons/coin.png',
                                               height: 20,
@@ -187,8 +230,8 @@ void showClosetShop(BuildContext context) {
                                         top: 40,
                                         left: 20,
                                         child: Container(
-                                          margin: EdgeInsets.all(10),
-                                          child: Text('50'),
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
                                         ),
                                       )
                                     ],
@@ -203,10 +246,10 @@ void showClosetShop(BuildContext context) {
                   ),
                   // close button for now
                   Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('Close'),
+                      child: const Text('Close'),
                     ),
                   ),
                 ],
