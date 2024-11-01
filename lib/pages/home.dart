@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
-import 'dart:math';
 
 void main() => runApp(const Home());
 
