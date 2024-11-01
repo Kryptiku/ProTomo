@@ -4,7 +4,7 @@ import 'package:protomo/pages/home.dart';
 import 'package:protomo/pages/loading.dart';
 
 void main() => runApp(MaterialApp(
-      initialRoute: '/home',
+      initialRoute: '/focus',
       routes: {
         '/': (context) => Loading(),
         '/home': (context) => Home(),

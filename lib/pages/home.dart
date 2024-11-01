@@ -41,11 +41,13 @@ class _HomeState extends State<Home> {
               ),
               Container(
                 child:
-                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      SizedBox(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
                         width: 60.0,
                         height: 60.0,
                         child: Image.asset(
