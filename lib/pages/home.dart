@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/closet.dart';
+import 'package:protomo/animations.dart';
+import 'dart:math';
 
 void main() => runApp(const Home());
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,11 +32,13 @@ class Home extends StatelessWidget {
                 ),
               ),
               Center(
-                child: Image.asset(
-                  "assets/axolotl/Pink.png",
+                child: BobbingRotatingImage(
+                  imagePath: "assets/axolotl/Pink.png",
+                  bobbingDistance: 40.0,
+                  bobbingDuration: 5,
+                  rotationDuration: 50,
                   width: 200,
-                  height: 200,
-                ),
+                  height: 200,)
               ),
               Container(
                 child:
