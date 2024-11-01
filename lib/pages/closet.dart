@@ -87,7 +87,7 @@ void showClosetShop(BuildContext context) {
                     child: TabBarView(
                       children: [
                         // Closet Tab
-                        Center(
+                        SingleChildScrollView(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -97,8 +97,48 @@ void showClosetShop(BuildContext context) {
                               ),
                               Wrap(
                                 spacing: 8.0,
-                                runSpacing: 20.0,
+                                runSpacing: 100.0,
                                 children: [
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
                                   Image.asset(
                                     'assets/buttons/medicine.png',
                                     height: 50,
@@ -185,7 +225,7 @@ void showClosetShop(BuildContext context) {
                           ),
                         ),
                         // Shop Tab
-                        Center(
+                        SingleChildScrollView(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -195,7 +235,8 @@ void showClosetShop(BuildContext context) {
                               ),
                               Wrap(
                                 spacing: 10.0,
-                                runSpacing: 40.0,
+                                runSpacing:
+                                    60.0, //this determines the spacing when it goes to the next line
                                 children: [
                                   Stack(
                                     children: [
@@ -652,6 +693,249 @@ void showClosetShop(BuildContext context) {
                                         child: Container(
                                           margin: const EdgeInsets.all(10),
                                           child: const Text('10'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/buttons/medicine.png',
+                                        height: 70,
+                                        width: 70,
+                                      ),
+                                      Positioned(
+                                          top: 40,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/buttons/coin.png',
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          )),
+                                      Positioned(
+                                        top: 40,
+                                        left: 20,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: const Text('50'),
                                         ),
                                       )
                                     ],
