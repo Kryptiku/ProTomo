@@ -23,7 +23,8 @@ class RotatingKnob extends StatefulWidget {
 }
 
 class _RotatingKnobState extends State<RotatingKnob> {
-  double angle = 0.0; // Angle in radians for tracking the small circle's position
+  double angle =
+      0.0; // Angle in radians for tracking the small circle's position
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +53,10 @@ class _RotatingKnobState extends State<RotatingKnob> {
             // Big circle
             Image.asset(
               'assets/big_bubble.png',
-            // Container(
+              // Container(
               width: radius * 2,
-              height: radius * 2,),
+              height: radius * 2,
+            ),
             //   decoration: BoxDecoration(
             //     shape: BoxShape.circle,
             //     color: Colors.blue[300],
@@ -62,21 +64,21 @@ class _RotatingKnobState extends State<RotatingKnob> {
             // ),
             // Small orbiting circle with extra space
             Transform.translate(
-              offset: Offset(smallCircleX, smallCircleY),
-              child: Image.asset(
-                'assets/small_bubble.png',
-                width: 40,
-                height: 40,
-              )
-              // Container(
-              //   width: 30,
-              //   height: 30,
-              //   decoration: BoxDecoration(
-              //     shape: BoxShape.circle,
-              //     color: Colors.red,
-              //   ),
-              // ),
-            ),
+                offset: Offset(smallCircleX, smallCircleY),
+                child: Image.asset(
+                  'assets/small_bubble.png',
+                  width: 40,
+                  height: 40,
+                )
+                // Container(
+                //   width: 30,
+                //   height: 30,
+                //   decoration: BoxDecoration(
+                //     shape: BoxShape.circle,
+                //     color: Colors.red,
+                //   ),
+                // ),
+                ),
           ],
         ),
       ),
