@@ -8,6 +8,6 @@ void main() => runApp(MaterialApp(
       routes: {
         '/': (context) => Loading(),
         '/home': (context) => Home(),
-        '/focus': (context) => FocusMode(),
+        '/focus': (context) => TimerKnob(),
       },
     ));
