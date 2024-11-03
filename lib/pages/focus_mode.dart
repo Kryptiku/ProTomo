@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:math';
 
 void main() {
-  runApp(TimerKnob());
+  runApp(const TimerKnob());
 }
 
 // class FocusMode extends StatelessWidget {
@@ -26,13 +26,12 @@ class TimerKnob extends StatefulWidget {
   State<TimerKnob> createState() => _TimerKnobState();
 }
 
-
 class _TimerKnobState extends State<TimerKnob> {
   double angle = -pi / 2; // Start angle at the top for 0 minutes
   int timerValue = 0; // Timer value in minutes
   int countdownSeconds = 0; // Total countdown seconds
   Timer? countdownTimer; // Timer instance for countdown
-  bool isCountingDown = false;// Flag to check if countdown is active
+  bool isCountingDown = false; // Flag to check if countdown is active
   String buttonState = 'start.png';
 
   final int maxMinutes = 180; // Maximum timer value
@@ -48,123 +47,133 @@ class _TimerKnobState extends State<TimerKnob> {
     double smallCircleY = (radius + orbitOffset) * sin(angle);
 
     // Format time in minutes:seconds
-    String formattedTime = '${(countdownSeconds ~/ 60).toString().padLeft(2, '0')}:${(countdownSeconds % 60).toString().padLeft(2, '0')}';
+    String formattedTime =
+        '${(countdownSeconds ~/ 60).toString().padLeft(2, '0')}:${(countdownSeconds % 60).toString().padLeft(2, '0')}';
 
     return Scaffold(
       body: SafeArea(
         top: false,
-          child: Container(
-            child: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/main_bg.png",),
-                      fit: BoxFit.cover,
+        child: Container(
+          child: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      "assets/main_bg.png",
                     ),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(height: 100),
-                    GestureDetector(
-                      onPanUpdate: (details) {
-                        if (isCountingDown) return; // Prevent adjustment during countdown
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(height: 100),
+                  GestureDetector(
+                    onPanUpdate: (details) {
+                      if (isCountingDown)
+                        return; // Prevent adjustment during countdown
 
-                        // Calculate the angle based on drag position
-                        Offset position = details.localPosition - Offset(radius, radius);
-                        double newAngle = atan2(position.dy, position.dx);
+                      // Calculate the angle based on drag position
+                      Offset position =
+                          details.localPosition - Offset(radius, radius);
+                      double newAngle = atan2(position.dy, position.dx);
 
-                        // Normalize angle to [0, 2π] and clamp to valid range
-                        if (newAngle < -pi / 2) {
-                          newAngle += 2 * pi;
-                        }
+                      // Normalize angle to [0, 2π] and clamp to valid range
+                      if (newAngle < -pi / 2) {
+                        newAngle += 2 * pi;
+                      }
 
-                        // Calculate new timer value based on the new angle
-                        double normalizedAngle = (newAngle + pi / 2) / (2 * pi); // Adjust for top start
-                        int newTimerValue = (normalizedAngle * maxMinutes).round();
+                      // Calculate new timer value based on the new angle
+                      double normalizedAngle = (newAngle + pi / 2) /
+                          (2 * pi); // Adjust for top start
+                      int newTimerValue =
+                          (normalizedAngle * maxMinutes).round();
 
-                        // Ensure timer value respects the increment, max limit, and does not go below 0
-                        // Fix minor bug with small bubble being able to rotate more than 360 degrees
-                        timerValue = (newTimerValue ~/ increment) * increment;
-                        // timerValue = timerValue.clamp(0, maxMinutes);
+                      // Ensure timer value respects the increment, max limit, and does not go below 0
+                      // Fix minor bug with small bubble being able to rotate more than 360 degrees
+                      timerValue = (newTimerValue ~/ increment) * increment;
+                      // timerValue = timerValue.clamp(0, maxMinutes);
 
-                        // Set the angle for the small circle
-                        angle = (timerValue / maxMinutes.toDouble()) * (2 * pi) - (pi / 2); // Adjust angle based on timer value
+                      // Set the angle for the small circle
+                      angle = (timerValue / maxMinutes.toDouble()) * (2 * pi) -
+                          (pi / 2); // Adjust angle based on timer value
 
-                        // Update the state to reflect the changes
-                        setState(() {});
-                        },
-                      child: Container(
-                        width: (radius + orbitOffset) * 2,
-                        height: (radius + orbitOffset) * 2,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Big circle with custom image
-                            Opacity(
-                              opacity: 0.7,
-                              child: Image.asset(
-                                'assets/big_bubble.png', // Path to your larger PNG image
-                                width: radius * 2,
-                                height: radius * 2,
-                              ),
-                            ),
-
-                            // Small orbiting circle with custom image
-                            Transform.translate(
-                              offset: Offset(smallCircleX, smallCircleY),
-                              child: Image.asset(
-                                'assets/small_bubble.png', // Path to your smaller PNG image
-                                width: 40,
-                                height: 40,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    // Start Timer button
-                    Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      // Update the state to reflect the changes
+                      setState(() {});
+                    },
+                    child: Container(
+                      width: (radius + orbitOffset) * 2,
+                      height: (radius + orbitOffset) * 2,
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          // Display timer countdown
-                          Text(
-                            isCountingDown ? formattedTime : '$timerValue:00',
-                            style: TextStyle(
-                              fontSize: 100,
-                              fontFamily: "VT323",
-                              color: Colors.white,
+                          // Big circle with custom image
+                          Opacity(
+                            opacity: 0.7,
+                            child: Image.asset(
+                              'assets/big_bubble.png', // Path to your larger PNG image
+                              width: radius * 2,
+                              height: radius * 2,
                             ),
                           ),
-                          SizedBox(height: 100,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: isCountingDown ? stopTimer : startTimer,
-                                child: SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: Image.asset(
-                                    'assets/buttons/$buttonState',
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ),
-                            ],
+
+                          // Small orbiting circle with custom image
+                          Transform.translate(
+                            offset: Offset(smallCircleX, smallCircleY),
+                            child: Image.asset(
+                              'assets/small_bubble.png', // Path to your smaller PNG image
+                              width: 40,
+                              height: 40,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Start Timer button
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // Display timer countdown
+                        Text(
+                          isCountingDown ? formattedTime : '$timerValue:00',
+                          style: const TextStyle(
+                            fontSize: 100,
+                            fontFamily: "VT323",
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 100,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: isCountingDown ? stopTimer : startTimer,
+                              child: SizedBox(
+                                width: 100,
+                                height: 100,
+                                child: Image.asset(
+                                  'assets/buttons/$buttonState',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
+        ),
       ),
     );
   }
@@ -176,7 +185,7 @@ class _TimerKnobState extends State<TimerKnob> {
       isCountingDown = true; // Start the countdown
     });
 
-    countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (countdownSeconds > 0) {
           countdownSeconds--;
@@ -190,11 +199,36 @@ class _TimerKnobState extends State<TimerKnob> {
   }
 
   void stopTimer() {
-    setState(() {
-      print('za warudo');
-      isCountingDown = false;
-      buttonState = 'start.png';
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Stop Focus Mode?"),
+          content: const Text("Are you sure you want to stop focus mode?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  isCountingDown = false;
+                  buttonState = 'start.png';
+                  countdownTimer?.cancel();
+                  timerValue = 0;
+                  angle = -pi / 2;
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
