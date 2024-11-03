@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 
+import 'package:protomo/animations.dart';
+
 void main() {
   runApp(TimerKnob());
 }
@@ -41,7 +43,7 @@ class _TimerKnobState extends State<TimerKnob> {
   @override
   Widget build(BuildContext context) {
     double radius = 100.0; // Radius of the larger circle
-    double orbitOffset = 40.0; // Extra space between the two circles
+    double orbitOffset = 60.0; // Extra space between the two circles
 
     // Calculate the position of the small circle with an added orbitOffset
     double smallCircleX = (radius + orbitOffset) * cos(angle);
@@ -64,67 +66,90 @@ class _TimerKnobState extends State<TimerKnob> {
                     ),
                   ),
                 ),
+                Center(
+                  child: Stack(
+                    children: [
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          if (isCountingDown) return; // Prevent adjustment during countdown
+
+                          // Calculate the angle based on drag position
+                          Offset position = details.localPosition - Offset(radius, radius);
+                          double newAngle = atan2(position.dy, position.dx);
+
+                          // Normalize angle to [0, 2π] and clamp to valid range
+                          if (newAngle < -pi / 2) {
+                            newAngle += 2 * pi;
+                          }
+
+                          // Calculate new timer value based on the new angle
+                          double normalizedAngle = (newAngle + pi / 2) / (2 * pi); // Adjust for top start
+                          int newTimerValue = (normalizedAngle * maxMinutes).round();
+
+                          // Ensure timer value respects the increment, max limit, and does not go below 0
+                          // Fix minor bug with small bubble being able to rotate more than 360 degrees
+                          timerValue = (newTimerValue ~/ increment) * increment;
+                          // timerValue = timerValue.clamp(0, maxMinutes);
+
+                          // Set the angle for the small circle
+                          angle = (timerValue / maxMinutes.toDouble()) * (2 * pi) - (pi / 2); // Adjust angle based on timer value
+
+                          // Update the state to reflect the changes
+                          setState(() {});
+                        },
+                        child: Container(
+                          width: (radius + orbitOffset) * 2,
+                          height: (radius + orbitOffset) * 2,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              BobbingRotatingImage(
+                                imagePath: 'assets/axolotl/Pink.png',
+                                  bobbingDistance: 30.0,
+                                  bobbingDuration: 5,
+                                  rotationDuration: 50,
+                                  width: 200,
+                                  height: 200,
+                              ),
+                              Opacity(
+                                opacity: 0.7,
+                                child: BobbingRotatingImage(
+                                  imagePath: 'assets/big_bubble.png',
+                                  width: radius * 3,
+                                  height: radius * 3,
+                                  bobbingDistance: 30,
+                                  bobbingDuration: 6,
+                                  rotationDuration: 200,
+                                  clockwise: false,
+                                ),
+                                // child: Image.asset(
+                                //   'assets/big_bubble.png', // Path to your larger PNG image
+                                //   width: radius * 3,
+                                //   height: radius * 3,
+                                // ),
+                              ),
+
+                              // Small orbiting circle with custom image
+                              Transform.translate(
+                                offset: Offset(smallCircleX, smallCircleY),
+                                child: Image.asset(
+                                  'assets/small_bubble.png', // Path to your smaller PNG image
+                                  width: 40,
+                                  height: 40,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(height: 100),
-                    GestureDetector(
-                      onPanUpdate: (details) {
-                        if (isCountingDown) return; // Prevent adjustment during countdown
 
-                        // Calculate the angle based on drag position
-                        Offset position = details.localPosition - Offset(radius, radius);
-                        double newAngle = atan2(position.dy, position.dx);
-
-                        // Normalize angle to [0, 2π] and clamp to valid range
-                        if (newAngle < -pi / 2) {
-                          newAngle += 2 * pi;
-                        }
-
-                        // Calculate new timer value based on the new angle
-                        double normalizedAngle = (newAngle + pi / 2) / (2 * pi); // Adjust for top start
-                        int newTimerValue = (normalizedAngle * maxMinutes).round();
-
-                        // Ensure timer value respects the increment, max limit, and does not go below 0
-                        // Fix minor bug with small bubble being able to rotate more than 360 degrees
-                        timerValue = (newTimerValue ~/ increment) * increment;
-                        // timerValue = timerValue.clamp(0, maxMinutes);
-
-                        // Set the angle for the small circle
-                        angle = (timerValue / maxMinutes.toDouble()) * (2 * pi) - (pi / 2); // Adjust angle based on timer value
-
-                        // Update the state to reflect the changes
-                        setState(() {});
-                        },
-                      child: Container(
-                        width: (radius + orbitOffset) * 2,
-                        height: (radius + orbitOffset) * 2,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Big circle with custom image
-                            Opacity(
-                              opacity: 0.7,
-                              child: Image.asset(
-                                'assets/big_bubble.png', // Path to your larger PNG image
-                                width: radius * 2,
-                                height: radius * 2,
-                              ),
-                            ),
-
-                            // Small orbiting circle with custom image
-                            Transform.translate(
-                              offset: Offset(smallCircleX, smallCircleY),
-                              child: Image.asset(
-                                'assets/small_bubble.png', // Path to your smaller PNG image
-                                width: 40,
-                                height: 40,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                     SizedBox(height: 20),
                     // Start Timer button
                     Container(
@@ -140,23 +165,29 @@ class _TimerKnobState extends State<TimerKnob> {
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 100,),
+                          SizedBox(height: 30,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               GestureDetector(
                                 onTap: isCountingDown ? stopTimer : startTimer,
-                                child: SizedBox(
+                                child: Image.asset(
+                                  'assets/buttons/$buttonState',
                                   width: 100,
                                   height: 100,
-                                  child: Image.asset(
-                                    'assets/buttons/$buttonState',
-                                    fit: BoxFit.contain,
-                                  ),
                                 ),
+                                // child: SizedBox(
+                                //   width: 100,
+                                //   height: 100,
+                                //   child: Image.asset(
+                                //     'assets/buttons/$buttonState',
+                                //     fit: BoxFit.contain,
+                                //   ),
+                                // ),
                               ),
                             ],
                           ),
+                          SizedBox(height: 10,)
                         ],
                       ),
                     ),

@@ -8,6 +8,7 @@ class BobbingRotatingImage extends StatefulWidget {
   final int rotationDuration;
   final double width;
   final double height;
+  final bool clockwise; // New parameter to control rotation direction
 
   const BobbingRotatingImage({
     Key? key,
@@ -17,6 +18,7 @@ class BobbingRotatingImage extends StatefulWidget {
     this.rotationDuration = 10,
     this.width = 200,
     this.height = 200,
+    this.clockwise = true, // Default to clockwise
   }) : super(key: key);
 
   @override
@@ -49,7 +51,11 @@ class _BobbingRotatingImageState extends State<BobbingRotatingImage> with Ticker
       duration: Duration(seconds: widget.rotationDuration),
     )..repeat();
 
-    _rotationAnimation = Tween<double>(begin: 0, end: 2 * pi).animate(_rotationController);
+    // Use the `clockwise` parameter to determine the direction of the rotation
+    _rotationAnimation = Tween<double>(
+      begin: 0,
+      end: widget.clockwise ? 2 * pi : -2 * pi, // Clockwise or counterclockwise
+    ).animate(_rotationController);
   }
 
   @override
