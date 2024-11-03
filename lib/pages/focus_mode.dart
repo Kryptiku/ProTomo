@@ -32,7 +32,8 @@ class _TimerKnobState extends State<TimerKnob> {
   int timerValue = 0; // Timer value in minutes
   int countdownSeconds = 0; // Total countdown seconds
   Timer? countdownTimer; // Timer instance for countdown
-  bool isCountingDown = false; // Flag to check if countdown is active
+  bool isCountingDown = false;// Flag to check if countdown is active
+  String buttonState = 'start.png';
 
   final int maxMinutes = 180; // Maximum timer value
   final int increment = 5; // Timer increments in minutes
@@ -144,12 +145,12 @@ class _TimerKnobState extends State<TimerKnob> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               GestureDetector(
-                                onTap: isCountingDown ? null : startTimer,
+                                onTap: isCountingDown ? stopTimer : startTimer,
                                 child: SizedBox(
                                   width: 100,
                                   height: 100,
                                   child: Image.asset(
-                                    'assets/buttons/start.png',
+                                    'assets/buttons/$buttonState',
                                     fit: BoxFit.contain,
                                   ),
                                 ),
@@ -170,6 +171,7 @@ class _TimerKnobState extends State<TimerKnob> {
 
   void startTimer() {
     setState(() {
+      buttonState = 'stop.png';
       countdownSeconds = timerValue * 60; // Convert to seconds
       isCountingDown = true; // Start the countdown
     });
@@ -181,8 +183,17 @@ class _TimerKnobState extends State<TimerKnob> {
         } else {
           countdownTimer?.cancel();
           isCountingDown = false; // Stop countdown when time runs out
+          buttonState = 'start.png';
         }
       });
+    });
+  }
+
+  void stopTimer() {
+    setState(() {
+      print('za warudo');
+      isCountingDown = false;
+      buttonState = 'start.png';
     });
   }
 
