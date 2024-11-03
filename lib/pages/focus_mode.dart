@@ -40,7 +40,7 @@ class _TimerKnobState extends State<TimerKnob> {
   @override
   Widget build(BuildContext context) {
     double radius = 100.0; // Radius of the larger circle
-    double orbitOffset = 30.0; // Extra space between the two circles
+    double orbitOffset = 40.0; // Extra space between the two circles
 
     // Calculate the position of the small circle with an added orbitOffset
     double smallCircleX = (radius + orbitOffset) * cos(angle);
@@ -102,10 +102,13 @@ class _TimerKnobState extends State<TimerKnob> {
                           alignment: Alignment.center,
                           children: [
                             // Big circle with custom image
-                            Image.asset(
-                              'assets/big_bubble.png', // Path to your larger PNG image
-                              width: radius * 2,
-                              height: radius * 2,
+                            Opacity(
+                              opacity: 0.7,
+                              child: Image.asset(
+                                'assets/big_bubble.png', // Path to your larger PNG image
+                                width: radius * 2,
+                                height: radius * 2,
+                              ),
                             ),
 
                             // Small orbiting circle with custom image
@@ -113,8 +116,8 @@ class _TimerKnobState extends State<TimerKnob> {
                               offset: Offset(smallCircleX, smallCircleY),
                               child: Image.asset(
                                 'assets/small_bubble.png', // Path to your smaller PNG image
-                                width: 30,
-                                height: 30,
+                                width: 40,
+                                height: 40,
                               ),
                             ),
                           ],
