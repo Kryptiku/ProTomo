@@ -2,11 +2,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-
 import 'package:protomo/animations.dart';
 
 void main() {
-  runApp(TimerKnob());
+  runApp(const TimerKnob());
 }
 
 // class FocusMode extends StatelessWidget {
@@ -28,13 +27,12 @@ class TimerKnob extends StatefulWidget {
   State<TimerKnob> createState() => _TimerKnobState();
 }
 
-
 class _TimerKnobState extends State<TimerKnob> {
   double angle = -pi / 2; // Start angle at the top for 0 minutes
   int timerValue = 0; // Timer value in minutes
   int countdownSeconds = 0; // Total countdown seconds
   Timer? countdownTimer; // Timer instance for countdown
-  bool isCountingDown = false;// Flag to check if countdown is active
+  bool isCountingDown = false; // Flag to check if countdown is active
   String buttonState = 'start.png';
 
   final int maxMinutes = 180; // Maximum timer value
@@ -50,7 +48,8 @@ class _TimerKnobState extends State<TimerKnob> {
     double smallCircleY = (radius + orbitOffset) * sin(angle);
 
     // Format time in minutes:seconds
-    String formattedTime = '${(countdownSeconds ~/ 60).toString().padLeft(2, '0')}:${(countdownSeconds % 60).toString().padLeft(2, '0')}';
+    String formattedTime =
+        '${(countdownSeconds ~/ 60).toString().padLeft(2, '0')}:${(countdownSeconds % 60).toString().padLeft(2, '0')}';
 
     return Scaffold(
       body: SafeArea(
@@ -207,7 +206,7 @@ class _TimerKnobState extends State<TimerKnob> {
       isCountingDown = true; // Start the countdown
     });
 
-    countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (countdownSeconds > 0) {
           countdownSeconds--;
@@ -221,11 +220,36 @@ class _TimerKnobState extends State<TimerKnob> {
   }
 
   void stopTimer() {
-    setState(() {
-      print('za warudo');
-      isCountingDown = false;
-      buttonState = 'start.png';
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Stop Focus Mode?"),
+          content: const Text("Are you sure you want to stop focus mode?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  isCountingDown = false;
+                  buttonState = 'start.png';
+                  countdownTimer?.cancel();
+                  timerValue = 0;
+                  angle = -pi / 2;
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
