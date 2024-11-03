@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
+import 'package:mysql1/mysql1.dart';
 
 void main() => runApp(const Home());
 
