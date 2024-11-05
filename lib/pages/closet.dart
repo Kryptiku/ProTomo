@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/home.dart';
-import 'package:mysql1/mysql1.dart';
 
 void main() => runApp(const Home());
 
