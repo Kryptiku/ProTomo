@@ -4,10 +4,10 @@ import 'package:protomo/pages/home.dart';
 import 'package:protomo/pages/loading.dart';
 
 void main() => runApp(MaterialApp(
-      initialRoute: '/focus',
+      initialRoute: '/home',
       routes: {
-        '/': (context) => Loading(),
-        '/home': (context) => Home(),
-        '/focus': (context) => TimerKnob(),
+        '/': (context) => const Loading(),
+        '/home': (context) => const Home(),
+        '/focus': (context) => const TimerKnob(),
       },
     ));
