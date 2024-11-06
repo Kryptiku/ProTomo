@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
-import 'package:mysql1/mysql1.dart';
 
 void main() => runApp(const Home());
 
@@ -32,14 +31,14 @@ class _HomeState extends State<Home> {
                 ),
               ),
               Center(
-                child: BobbingRotatingImage(
-                  imagePath: "assets/axolotl/Pink.png",
-                  bobbingDistance: 40.0,
-                  bobbingDuration: 5,
-                  rotationDuration: 50,
-                  width: 200,
-                  height: 200,)
-              ),
+                  child: BobbingRotatingImage(
+                imagePath: "assets/axolotl/Pink.png",
+                bobbingDistance: 40.0,
+                bobbingDuration: 5,
+                rotationDuration: 50,
+                width: 200,
+                height: 200,
+              )),
               Container(
                 child:
                     Column(mainAxisAlignment: MainAxisAlignment.end, children: [

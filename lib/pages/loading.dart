@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:mysql1/mysql1.dart';
 
 class Loading extends StatelessWidget {
   const Loading({super.key});
@@ -13,18 +12,16 @@ class Loading extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/main_bg.png'),
-                  fit: BoxFit.cover,
-                  alignment: Alignment(0.5, 0)
-                )
-              ),
+                  image: DecorationImage(
+                      image: AssetImage('assets/main_bg.png'),
+                      fit: BoxFit.cover,
+                      alignment: Alignment(0.5, 0))),
             ),
             Center(
-                child: SpinKitFadingCube(
-                  color: Colors.deepPurple,
-                  size: 100.0,
-                ),
+              child: SpinKitFadingCube(
+                color: Colors.deepPurple,
+                size: 100.0,
+              ),
             ),
           ],
         ),
