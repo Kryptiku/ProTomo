@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
 
   Future<void> _playSoundFx() async {
     try {
-      await FlameAudio.bgm.play('sample_sound_fx.mp3', volume: 0.2);
+      await FlameAudio.play('sample_sound_fx.mp3', volume: 0.2);
     } catch (e) {
       print("Error playing background music: $e");
     }
@@ -87,6 +87,7 @@ class _HomeState extends State<Home> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  _playSoundFx();
                                   print('Start Timer');
                                   Navigator.pushNamed(context, '/focus');
                                 },
@@ -153,7 +154,10 @@ class _HomeState extends State<Home> {
                                 height: 25,
                               ),
                               GestureDetector(
-                                  onTap: () => showClosetShop(context),
+                                  onTap: () {
+                                    showClosetShop(context);
+                                    _playSoundFx();
+                                  },
                                   child: SizedBox(
                                     width: 60,
                                     height: 60,

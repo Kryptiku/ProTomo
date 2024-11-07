@@ -1,16 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:protomo/pages/home.dart';
-
-void main() => runApp(const Home());
-
-class ClosetShop extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Home(),
-    );
-  }
-}
 
 void showClosetShop(BuildContext context) {
   showDialog(
