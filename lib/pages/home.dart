@@ -1,8 +1,10 @@
 import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:protomo/pages/audio_service.dart';
 import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
+import 'package:protomo/pages/settings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,22 +26,6 @@ class _HomeState extends State<Home> {
   //   _playBackgroundMusic();
   // }
 
-  Future<void> _playBackgroundMusic() async {
-    try {
-      await FlameAudio.bgm.play('sample_bg_music.mp3', volume: 0.2);
-    } catch (e) {
-      print("Error playing background music: $e");
-    }
-  }
-
-  Future<void> _playSoundFx() async {
-    try {
-      await FlameAudio.play('sample_sound_fx.mp3', volume: 0.2);
-    } catch (e) {
-      print("Error playing background music: $e");
-    }
-  }
-
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -47,7 +33,7 @@ class _HomeState extends State<Home> {
           bottom: false,
           child: GestureDetector(
             onTap: () {
-              _playSoundFx();
+              AudioService.playSoundFx();
             },
             child: Container(
               child: Stack(
@@ -87,7 +73,7 @@ class _HomeState extends State<Home> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  _playSoundFx();
+                                  AudioService.playSoundFx();
                                   print('Start Timer');
                                   Navigator.pushNamed(context, '/focus');
                                 },
@@ -120,7 +106,8 @@ class _HomeState extends State<Home> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  _playBackgroundMusic();
+                                  showSettings(context);
+                                  AudioService.playSoundFx();
                                 },
                                 child: SizedBox(
                                   width: 60,
@@ -149,14 +136,19 @@ class _HomeState extends State<Home> {
                                 height: 45,
                                 fit: BoxFit.contain,
                               ),
-                              const SizedBox(
-                                width: 25,
-                                height: 25,
+                              GestureDetector(
+                                onTap: () {
+                                  AudioService.playBackgroundMusic();
+                                },
+                                child: SizedBox(
+                                  width: 25,
+                                  height: 25,
+                                ),
                               ),
                               GestureDetector(
                                   onTap: () {
                                     showClosetShop(context);
-                                    _playSoundFx();
+                                    AudioService.playSoundFx();
                                   },
                                   child: SizedBox(
                                     width: 60,
