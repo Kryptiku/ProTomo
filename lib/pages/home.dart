@@ -63,6 +63,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
+        bottom: false,
         child: Stack(
           children: [
             Container(
@@ -84,6 +86,100 @@ class _HomeState extends State<Home> {
                 height: 200,
               ),
             ),
+            Container(
+              child:
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 60.0,
+                          height: 60.0,
+                          child: Image.asset(
+                            'assets/buttons/calendar.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            print('Start Timer');
+                            Navigator.pushNamed(context, '/focus');
+                          },
+                          child: SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: Image.asset(
+                              'assets/buttons/start.png',
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 70,
+                          height: 70,
+                          child: Image.asset(
+                            'assets/buttons/history.png',
+                          ),
+                        )
+                      ],
+                    )
+                  ]),
+            ),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: Image.asset(
+                            'assets/buttons/settings.png',
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Column(
+                      children: [
+                        Image.asset(
+                          'assets/buttons/coin.png',
+                          height: 45,
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(
+                          width: 25,
+                          height: 25,
+                        ),
+                        GestureDetector(
+                            onTap: () => showClosetShop(context),
+                            child: SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: Image.asset(
+                                'assets/buttons/briefcase.png',
+                              ),
+                            )),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -137,53 +233,7 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            _buildBottomNavBar(),
-            _buildSettingsAndShopIcons(),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _navIcon('assets/buttons/calendar.png', onTap: () {
-              // Calendar navigation logic here
-            }),
-            _navIcon('assets/buttons/start.png', onTap: () {
-              print('Start Timer');
-              Navigator.pushNamed(context, '/focus');
-            }),
-            _navIcon('assets/buttons/history.png'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSettingsAndShopIcons() {
-    return Positioned(
-      top: 60,
-      left: 0,
-      child: _navIcon('assets/buttons/settings.png'),
-    );
-  }
-
-  Widget _navIcon(String assetPath, {VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        width: 60,
-        height: 60,
-        child: Image.asset(
-          assetPath,
-          fit: BoxFit.contain,
         ),
       ),
     );
