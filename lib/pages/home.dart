@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:protomo/dbtest.dart';
 import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
 
@@ -12,6 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final test = FirestoreTest();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +118,9 @@ class _HomeState extends State<Home> {
                             height: 25,
                           ),
                           GestureDetector(
-                              onTap: () => showClosetShop(context),
+                              onTap: () async {
+                                await test.testAddData();
+                              },
                               child: SizedBox(
                                 width: 60,
                                 height: 60,

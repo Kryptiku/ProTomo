@@ -53,10 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '',
+    apiKey: 'AIzaSyBVjNzqeexnSOkFY3CaFg8bDHkBhoexqNI',
     appId: '1:400404644890:android:edfdcc553f0326ff86bda3',
     messagingSenderId: '400404644890',
     projectId: 'protomo-database',
     storageBucket: 'protomo-database.firebasestorage.app',
   );
+
 }
