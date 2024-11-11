@@ -1,6 +1,6 @@
-// Fully Layout Focus Mode
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:protomo/dbtest.dart';
 import 'dart:math';
 import 'package:protomo/animations.dart';
 
@@ -23,6 +23,7 @@ void main() {
 class TimerKnob extends StatefulWidget {
   const TimerKnob({super.key});
 
+class RotatingKnob extends StatefulWidget {
   @override
   State<TimerKnob> createState() => _TimerKnobState();
 }

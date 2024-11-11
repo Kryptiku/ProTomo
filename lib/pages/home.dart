@@ -2,6 +2,7 @@ import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/audio_service.dart';
+import 'package:protomo/dbtest.dart';
 import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
 import 'package:protomo/pages/settings.dart';
@@ -68,6 +69,7 @@ class _HomeState extends State<Home> {
     });
   }
 
+  final test = FirestoreTest();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,7 +208,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-            
+
                 Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
