@@ -7,6 +7,8 @@ import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
 import 'package:protomo/pages/settings.dart';
 
+import 'history.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlameAudio.audioCache
@@ -23,6 +25,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<Task> _tasks = [];
+  final List<Task> _historyTasks = [];
 
   void _addTask(String taskTitle) {
     setState(() {
@@ -65,7 +68,9 @@ class _HomeState extends State<Home> {
 
   void _toggleTaskDone(int index) {
     setState(() {
-      _tasks[index].isDone = !_tasks[index].isDone;
+      Task completedTask = _tasks.removeAt(index);
+      completedTask.isDone = true;
+      _historyTasks.add(completedTask);
     });
   }
 
@@ -131,11 +136,19 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: 70,
-                              height: 70,
-                              child: Image.asset(
-                                'assets/buttons/history.png',
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => HistoryPage(historyTasks: _historyTasks),
+                                  )
+                                );
+                              },
+                              child: SizedBox(
+                                width: 70,
+                                height: 70,
+                                child: Image.asset(
+                                  'assets/buttons/history.png',
+                                ),
                               ),
                             )
                           ],
@@ -201,7 +214,8 @@ class _HomeState extends State<Home> {
                                   child: Image.asset(
                                     'assets/buttons/briefcase.png',
                                   ),
-                                )),
+                                ),
+                            ),
                           ],
                         )
                       ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/dbtest.dart';
+import 'package:protomo/pages/history.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +23,7 @@ void main() async {
       '/focus': (context) => TimerKnob(),
       '/login': (context) => LoginPage(),
       '/register': (context) => RegisterScreen(),
+      '/history': (context) => HistoryPage(historyTasks: []),
     },
   ));
 }
