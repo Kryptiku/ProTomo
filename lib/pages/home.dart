@@ -189,6 +189,15 @@ class _HomeState extends State<Home> {
                       children: [
                         Column(
                           children: [
+                            StreamBuilder<String>(
+                              stream: db.showCoins('user1'), // Listen to the stream for real-time updates
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return CircularProgressIndicator(); // Show loading indicator while waiting for the result
+                                }
+                                return Text('${snapshot.data}'); // Display the coins when data is available
+                              },
+                            ),
                             Image.asset(
                               'assets/buttons/coin.png',
                               height: 45,

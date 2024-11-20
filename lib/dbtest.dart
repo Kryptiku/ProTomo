@@ -22,4 +22,68 @@ class FirestoreTest {
       print("Error adding document: $e");
     }
   }
+
+  Future<void> buyItem(String foodId) async {
+    try {
+      // Get the item document from the store collection
+      final storeItemDoc = db.collection('store').doc(foodId);
+      final DocumentSnapshot storeSnapshot = await storeItemDoc.get();
+
+      if (storeSnapshot.exists) {
+        // Retrieve the item's cost
+        final Map<String, dynamic> itemData = storeSnapshot.data() as Map<String, dynamic>;
+        final int cost = itemData['cost'];
+
+        // Reference the user's coins
+        final userDoc = db.collection('users').doc('user1');
+        final DocumentSnapshot userSnapshot = await userDoc.get();
+
+        if (userSnapshot.exists) {
+          // Retrieve user's current coins
+          final Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+          final int currentCoins = userData['coins'];
+
+          if (currentCoins >= cost) {
+            // Deduct cost from user's coins
+            final int updatedCoins = currentCoins - cost;
+
+            // Update user's coins in Firestore
+            await userDoc.update({'coins': updatedCoins});
+
+            // Add the item to the user's inventory
+            final userInventoryDoc = userDoc.collection('inventory').doc(foodId);
+            final bool itemExists = (await userInventoryDoc.get()).exists;
+
+            if (itemExists) {
+              await userInventoryDoc.update({'quantity': FieldValue.increment(1)});
+            } else {
+              await userInventoryDoc.set({'quantity': 1, 'cost': cost});
+            }
+
+            print("Item bought successfully!");
+          } else {
+            print("Not enough coins to buy this item!");
+          }
+        } else {
+          print("User document not found!");
+        }
+      } else {
+        print("Item document not found!");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    }
+  }
+
+  Stream<String> showCoins(String userID) {
+    return db.collection('users').doc(userID).snapshots().map((snapshot) => snapshot['coins'].toString());
+  }
+
+  Future<String> getItemCost(String foodID) async {
+    final doc = await db.collection('store').doc(foodID).get();
+    return doc['cost'].toString();
+  }
+
+
+
 } // class
