@@ -7,6 +7,7 @@ import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
 import 'package:protomo/pages/settings.dart';
 import 'package:protomo/pet_state.dart';
+import 'package:protomo/dirtiness_overlay.dart';
 
 import 'history.dart';
 
@@ -88,6 +89,18 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void _feedPet() {
+    setState(() {
+      pet.feed(10);
+    });
+  }
+
+  void _cleanTank() {
+    setState(() {
+      pet.cleanTank();
+    });
+  }
+
   final test = FirestoreTest();
 
   @override
@@ -115,6 +128,19 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
+                    Center(
+                      child: BobbingRotatingImage(
+                        imagePath: "assets/axolotl/Pink.png",
+                        bobbingDistance: 40.0,
+                        bobbingDuration: 5,
+                        rotationDuration: 50,
+                        width: 200,
+                        height: 200,
+                      ),),
+                    DirtinessOverlay(
+                      dirtinessLevel: pet.tankLevel,
+                      maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
+                    ),
                     Positioned(
                       top: MediaQuery.of(context).padding.top + 10,
                       left: 10,
@@ -141,15 +167,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    Center(
-                      child: BobbingRotatingImage(
-                        imagePath: "assets/axolotl/Pink.png",
-                        bobbingDistance: 40.0,
-                        bobbingDuration: 5,
-                        rotationDuration: 50,
-                        width: 200,
-                        height: 200,
-                      ),),
+
                     Container(
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -157,12 +175,19 @@ class _HomeState extends State<Home> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(
-                                  width: 60.0,
-                                  height: 60.0,
-                                  child: Image.asset(
-                                    'assets/buttons/calendar.png',
-                                    fit: BoxFit.contain,
+
+                                GestureDetector(
+                                  onTap: () {
+                                    print('clean');
+                                    _cleanTank();
+                                  },
+                                  child: SizedBox(
+                                    width: 60.0,
+                                    height: 60.0,
+                                    child: Image.asset(
+                                      'assets/buttons/calendar.png',
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
                                 ),
                                 GestureDetector(
