@@ -25,13 +25,13 @@ class AudioService {
   // Update background music volume
   static void setBgmVolume(double volume) {
     bgmVolume = volume;
-    playBackgroundMusic(); // Update the music with the new volume
+
   }
 
   // Update sound effects volume
   static void setSfxVolume(double volume) {
     sfxVolume = volume;
-    playSoundFx(); // Update the sound effects with the new volume
+
   }
 
   // Update master volume (affects both BGM and SFX)

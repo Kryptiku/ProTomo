@@ -8,7 +8,6 @@ import 'package:protomo/animations.dart';
 import 'package:protomo/pages/settings.dart';
 import 'package:protomo/pet_state.dart';
 import 'package:protomo/dirtiness_overlay.dart';
-
 import 'history.dart';
 
 void main() async {
@@ -105,8 +104,6 @@ class _HomeState extends State<Home> {
       pet.cleanTank();
     });
   }
-
-  final test = FirestoreTest();
 
   @override
   Widget build(BuildContext context) {
@@ -239,7 +236,6 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () {
                                     showSettings(context);
-
                                     },
                                   child: SizedBox(
                                     width: 60,

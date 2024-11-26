@@ -88,8 +88,6 @@ class FirestoreTest {
 
   Future<void> addTaskDb(String userID, String taskName) async {
     try {
-
-
       // Prepare the task data
       final data = <String, dynamic>{
         "dateEntered": DateTime.now(),
