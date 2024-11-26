@@ -135,7 +135,7 @@ class _HomeState extends State<Home> {
                     ),
                     Center(
                       child: BobbingRotatingImage(
-                        imagePath: "assets/axolotl/Pink.png",
+                        imagePath: "assets/axolotl/Baby-Pink-Axolotl-2.png",
                         bobbingDistance: 40.0,
                         bobbingDuration: 5,
                         rotationDuration: 50,
@@ -147,7 +147,7 @@ class _HomeState extends State<Home> {
                       maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
                     ),
                     Positioned(
-                      top: MediaQuery.of(context).padding.top + 10,
+                      top: MediaQuery.of(context).padding.top + 20,
                       left: 10,
                       child: Container(
                         padding: EdgeInsets.all(8),
@@ -231,7 +231,7 @@ class _HomeState extends State<Home> {
                     ),
                     Container(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
+                        padding: const EdgeInsets.fromLTRB(0, 150, 0, 0),
                         child: Column(
                           children: [
                             Row(

@@ -22,6 +22,19 @@ class StartPage extends StatelessWidget {
               ),
             ),
             // Centered Start Button
+            Transform.translate(
+              offset: Offset(50, -200), // Moves the image by x=20, y=-30
+              child: Container(
+                height: 1000,
+                width: 1000,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/axolotl/Pink.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
             Center(
               child: TextButton(
                 onPressed: () {
@@ -29,9 +42,10 @@ class StartPage extends StatelessWidget {
                   AudioService.playSoundFx();
                   AudioService.playBackgroundMusic();
                 },
+
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.blue.withOpacity(0.8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

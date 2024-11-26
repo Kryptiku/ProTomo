@@ -18,7 +18,7 @@ class DirtinessOverlay extends StatelessWidget {
     return Positioned.fill(
       child: IgnorePointer(
         child: Container(
-          color: Colors.brown.withOpacity(opacity),
+          color: Colors.green.withOpacity(opacity),
         ),
       ),
     );
