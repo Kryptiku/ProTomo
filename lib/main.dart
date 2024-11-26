@@ -8,6 +8,7 @@ import 'package:protomo/pages/home.dart';
 import 'package:protomo/pages/loading.dart';
 import 'package:protomo/pages/login.dart';
 import 'package:protomo/pages/register.dart';
+import 'package:protomo/pages/start.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +16,7 @@ void main() async {
   await Firebase.initializeApp();
 
   runApp(MaterialApp(
-    initialRoute: '/home',
+    initialRoute: '/start',
     routes: {
       '/': (context) => Loading(),
       '/home': (context) => Home(),
@@ -23,6 +24,7 @@ void main() async {
       '/login': (context) => LoginPage(),
       '/register': (context) => RegisterScreen(),
       '/history': (context) => HistoryPage(historyTasks: []),
+      '/start': (context) => StartPage(),
     },
   ));
 }

@@ -239,7 +239,7 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () {
                                     showSettings(context);
-                                    AudioService.playSoundFx();
+
                                     },
                                   child: SizedBox(
                                     width: 60,
