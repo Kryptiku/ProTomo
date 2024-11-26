@@ -11,8 +11,8 @@ Widget foodButton(String foodId, String assetPath) {
         return SizedBox(
           height: 70,
           width: 70,
-          child: CircularProgressIndicator(),
-        ); // Loading indicator while fetching
+          child: CircularProgressIndicator(), // Loading indicator while fetching
+        );
       }
       if (snapshot.hasError) {
         return SizedBox(
@@ -23,8 +23,56 @@ Widget foodButton(String foodId, String assetPath) {
       }
 
       return GestureDetector(
-        onTap: () {
-          db.buyItem(foodId); // Pass the foodId dynamically
+        onTap: () async {
+          int itemCost = int.parse(snapshot.data ?? '0'); // Cost of the item
+          int userCoins = await db.getUserCoins('user1'); // Fetch user's coins
+
+          if (userCoins >= itemCost) {
+            // Show confirmation dialog before purchasing
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Confirm Purchase'),
+                  content: Text(
+                    'Do you want to purchase this item for $itemCost coins?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context), // Cancel
+                      child: Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Close the dialog
+                        db.buyItem(foodId); // Purchase the item
+                      },
+                      child: Text('Confirm'),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            // Show insufficient coins dialog
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Insufficient Coins'),
+                  content: Text(
+                    'You need $itemCost coins to purchase this item, but you only have $userCoins coins.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         },
         child: Stack(
           children: [
@@ -63,6 +111,7 @@ Widget foodButton(String foodId, String assetPath) {
     },
   );
 }
+
 
 
 
