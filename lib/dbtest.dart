@@ -84,6 +84,46 @@ class FirestoreTest {
     return doc['cost'].toString();
   }
 
+  Future<void> addTaskDb(String userID, String taskName) async {
+    try {
+
+
+      // Prepare the task data
+      final data = <String, dynamic>{
+        "dateEntered": DateTime.now(),
+        "taskName": taskName,
+      };
+
+      // Add the task to the user's task collection
+      await db.collection('users').doc(userID).collection('tasks').doc(taskName).set(data);
+    } catch (e) {
+      print("Error adding task '$taskName': $e");
+    }
+  }
+
+  Future<void> finishTaskDb(String userID, String taskName) async {
+    try {
+      // Fetch the number of completed tasks
+      var querySnapshot = await db.collection('users').doc(userID).collection('completedTasks').get();
+      int taskNum = querySnapshot.docs.length;
+
+      // Generate a new task number and name
+      int newTaskNum = taskNum + 1;
+      String newTaskName = newTaskNum.toString();
+
+      final data = <String, dynamic>{
+        "dateCompleted": DateTime.now(),
+        "taskName": taskName,
+      };
+
+      await db.collection('users').doc(userID).collection('completedTasks').doc(newTaskName).set(data);
+
+      await db.collection('users').doc(userID).collection('tasks').doc(taskName).delete();
+
+    } catch (e) {
+      print("Error completing task '$taskName': $e");
+    }
+  }
 
 
 } // class
