@@ -27,6 +27,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late PetState pet;
+  final db = FirestoreTest();
 
   @override
   void initState() {
@@ -46,6 +47,8 @@ class _HomeState extends State<Home> {
     setState(() {
       _tasks.add(Task(title: taskTitle, isDone: false));
     });
+
+    db.addTaskDb('user1', taskTitle);
   }
 
   void _showAddTaskPopup() {
@@ -82,11 +85,13 @@ class _HomeState extends State<Home> {
   }
 
   void _toggleTaskDone(int index) {
+    Task completedTask = _tasks.removeAt(index);
     setState(() {
-      Task completedTask = _tasks.removeAt(index);
       completedTask.isDone = true;
       _historyTasks.add(completedTask);
     });
+
+    db.finishTaskDb('user1', completedTask.title);
   }
 
   void _feedPet() {
