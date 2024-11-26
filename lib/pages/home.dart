@@ -99,7 +99,7 @@ class _HomeState extends State<Home> {
                 ),
                 Center(
                   child: BobbingRotatingImage(
-                    imagePath: "assets/axolotl/Pink.png",
+                    imagePath: "assets/axolotl/Baby-Pink-Axolotl-2.png",
                     bobbingDistance: 40.0,
                     bobbingDuration: 5,
                     rotationDuration: 50,

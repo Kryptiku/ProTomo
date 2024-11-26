@@ -102,7 +102,7 @@ class _TimerKnobState extends State<TimerKnob> {
                         alignment: Alignment.center,
                         children: [
                           BobbingRotatingImage(
-                            imagePath: 'assets/axolotl/Pink.png',
+                            imagePath: 'assets/axolotl/Baby-Pink-Axolotl-2.png',
                             bobbingDistance: 30.0,
                             bobbingDuration: 5,
                             rotationDuration: 50,

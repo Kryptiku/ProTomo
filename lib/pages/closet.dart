@@ -49,7 +49,12 @@ Widget foodButton(String foodId, String assetPath) {
               left: 20,
               child: Container(
                 margin: const EdgeInsets.all(10),
-                child: Text(snapshot.data ?? ''), // Display fetched cost
+                child: Text(snapshot.data ?? '',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color:Colors.white
+                  ),
+                ), // Display fetched cost
               ),
             ),
           ],
@@ -75,8 +80,8 @@ void showClosetShop(BuildContext context) {
           child: Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/buttons/closet.png'),
-                  fit: BoxFit.fitWidth),
+                  image: AssetImage('assets/buttons/asset.png'),
+                  fit: BoxFit.cover),
             ),
             child: DefaultTabController(
               length: 2,
@@ -85,8 +90,8 @@ void showClosetShop(BuildContext context) {
                 children: [
                   // Tab bar for Closet and Shop
                   TabBar(
-                    labelColor: Colors.black,
-                    indicatorColor: Colors.blue,
+                    labelColor: Colors.white,
+                    indicatorColor: Colors.white,
                     tabs: [
                       Tab(
                         child: Row(
@@ -109,7 +114,11 @@ void showClosetShop(BuildContext context) {
                             const SizedBox(
                               width: 8,
                             ),
-                            const Text('Closet'),
+                            const Text('Closet',
+                              style: TextStyle(
+                                  fontSize: 22,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -117,7 +126,11 @@ void showClosetShop(BuildContext context) {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('Shop'),
+                            const Text('Shop',
+                              style: TextStyle(
+                                fontSize: 22,
+                              ),
+                            ),
                             const SizedBox(
                               width: 8,
                             ),
@@ -131,6 +144,7 @@ void showClosetShop(BuildContext context) {
                       ),
                     ],
                   ),
+                  SizedBox(height: 40.0),
                   // Tab bar view for each tab content
                   SizedBox(
                     height: 500, //height of the shop/closet
@@ -143,16 +157,90 @@ void showClosetShop(BuildContext context) {
                             children: [
                               const Text(
                                 'Closet',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  color:Colors.white
+                                ),
                               ),
+                              SizedBox(height: 50.0),
                               Wrap(
-                                spacing: 8.0,
-                                runSpacing: 100.0,
+                                spacing: 10.0,
+                                runSpacing: 40.0,
                                 children: [
                                   Image.asset(
                                     'assets/buttons/medicine.png',
-                                    height: 50,
-                                    width: 50,
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/chicken.png',
+                                    height: 70,
+                                    width: 70,
+                                  ),
+                                  Image.asset(
+                                    'assets/buttons/medicine.png',
+                                    height: 70,
+                                    width: 70,
                                   ),
                                 ],
                               )
@@ -166,13 +254,22 @@ void showClosetShop(BuildContext context) {
                             children: [
                               const Text(
                                 'Shop Items',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(
+                                    fontSize: 28,
+                                    color:Colors.white
+                                ),
                               ),
+                              SizedBox(height: 50.0),
                               Wrap(
                                 spacing: 10.0,
-                                runSpacing:
-                                    60.0, //this determines the spacing when it goes to the next line
+                                runSpacing: 40.0, //this determines the spacing when it goes to the next line
                                 children: [
+                                  foodButton('food1', 'assets/buttons/chicken.png'),
+                                  foodButton('meds1', 'assets/buttons/medicine.png'),
+                                  foodButton('food1', 'assets/buttons/chicken.png'),
+                                  foodButton('meds1', 'assets/buttons/medicine.png'),
+                                  foodButton('food1', 'assets/buttons/chicken.png'),
+                                  foodButton('meds1', 'assets/buttons/medicine.png'),
                                   foodButton('food1', 'assets/buttons/chicken.png'),
                                   foodButton('meds1', 'assets/buttons/medicine.png')
                                 ],
@@ -181,14 +278,6 @@ void showClosetShop(BuildContext context) {
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  // close button for now
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Close'),
                     ),
                   ),
                 ],
