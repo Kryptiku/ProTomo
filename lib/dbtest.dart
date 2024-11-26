@@ -74,7 +74,9 @@ class FirestoreTest {
       print("Error occurred: $e");
     }
   }
-
+  Future<int> getUserCoins(String userID) async {
+    return db.collection('users').doc(userID).snapshots().map((snapshot) => snapshot['coins'] as int).first; // Gets the first value from the stream
+  }
   Stream<String> showCoins(String userID) {
     return db.collection('users').doc(userID).snapshots().map((snapshot) => snapshot['coins'].toString());
   }
