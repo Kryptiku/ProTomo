@@ -23,7 +23,7 @@ void main() async {
       '/focus': (context) => TimerKnob(),
       '/login': (context) => LoginPage(),
       '/register': (context) => RegisterScreen(),
-      '/history': (context) => HistoryPage(historyTasks: []),
+      '/history': (context) => HistoryPage(),
       '/start': (context) => StartPage(),
     },
   ));
