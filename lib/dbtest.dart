@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class FirestoreTest {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<void> buyItem(String foodId) async {
+  Future<void> buyItem(String userID, String foodId) async {
     try {
       // Get the item document from the store collection
       final storeItemDoc = db.collection('store').doc(foodId);
@@ -15,7 +16,7 @@ class FirestoreTest {
         final int cost = itemData['cost'];
 
         // Reference the user's coins
-        final userDoc = db.collection('users').doc('user1');
+        final userDoc = db.collection('users').doc(userID);
         final DocumentSnapshot userSnapshot = await userDoc.get();
 
         if (userSnapshot.exists) {
@@ -54,6 +55,7 @@ class FirestoreTest {
       print("Error occurred: $e");
     }
   }
+
   Future<int> getUserCoins(String userID) async {
     return db.collection('users').doc(userID).snapshots().map((snapshot) => snapshot['coins'] as int).first; // Gets the first value from the stream
   }
@@ -97,7 +99,6 @@ class FirestoreTest {
       };
 
       await db.collection('users').doc(userID).collection('completedTasks').doc(newTaskName).set(data);
-
       await db.collection('users').doc(userID).collection('tasks').doc(taskName).delete();
 
     } catch (e) {
@@ -138,7 +139,7 @@ class FirestoreTest {
     final completedTaskRef = db.collection('users').doc(userID).collection('tasks');
 
     try {
-      // Fetch the tasks from F irestore
+      // Fetch the tasks from Firestore
       final querySnapshot = await completedTaskRef.get();
       print("Fetched ${querySnapshot.docs.length} tasks");
 
@@ -161,6 +162,65 @@ class FirestoreTest {
     }
   }
 
+  Future<int> getTasksAmountDB(String userID) async {
+    final usertaskRef = db.collection('users').doc(userID).collection('tasks');
+    final querySnapshot = await usertaskRef.get();
 
+    return querySnapshot.docs.length;
+  }
+
+  Future<int> getCompletedTasksTodayDB(String userID) async {
+    final completedTaskRef = db.collection('users').doc(userID).collection('completedTasks');
+    DateTime now = DateTime.now();
+    DateTime startOfDay = DateTime(now.year, now.month, now.day, 0, 0, 0);
+    DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+    try {
+      // Query tasks completed today
+      QuerySnapshot querySnapshot = await completedTaskRef
+          .where('dateCompleted', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where('dateCompleted', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+          .get();
+
+      // Return the count of documents
+      return querySnapshot.docs.length.toInt();
+    } catch (e) {
+      print("Error fetching completed tasks: $e");
+      return 0;
+    }
+  }
+
+  Future<int> getActiveTasksTodayDB(String userID) async {
+    final completedTaskRef = db.collection('users').doc(userID).collection('tasks');
+    DateTime now = DateTime.now();
+    DateTime startOfDay = DateTime(now.year, now.month, now.day, 0, 0, 0);
+    DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+    try {
+      // Query tasks completed today
+      QuerySnapshot querySnapshot = await completedTaskRef
+          .where('dateEntered', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where('dateEntered', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+          .get();
+
+      // Return the count of documents
+      return querySnapshot.docs.length.toInt();
+    } catch (e) {
+      print("Error fetching completed tasks: $e");
+      return 0;
+    }
+  }
+
+  Future<void> rewardTaskDB(String userID, int reward) async {
+    final userRef = db.collection('users').doc(userID);
+    final DocumentSnapshot userSnapshot = await userRef.get();
+
+    final Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+    final int currentCoins = userData['coins'];
+
+    final int updatedCoins = currentCoins + reward;
+
+    await userRef.update({'coins': updatedCoins});
+  }
 
 } // class

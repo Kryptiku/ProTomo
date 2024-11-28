@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import '../dbtest.dart';
 
+String loggedUserID = 'user1';
+
 class HistoryPage extends StatefulWidget {
-
-
   const HistoryPage({Key? key}) : super(key: key);
 
   @override
@@ -19,7 +19,7 @@ class _HistoryPageState extends State<HistoryPage> {
   void initState() {
     super.initState();
     // Fetch task history when the page loads.
-    _completedTaskNamesFuture = db.getCompletedTasksDB('user1');
+    _completedTaskNamesFuture = db.getCompletedTasksDB(loggedUserID);
   }
 
   @override

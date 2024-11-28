@@ -10,6 +10,9 @@ import 'package:protomo/pet_state.dart';
 import 'package:protomo/dirtiness_overlay.dart';
 import 'history.dart';
 
+String loggedUserID = 'user1';
+int taskReward = 5;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlameAudio.audioCache
@@ -45,11 +48,12 @@ class _HomeState extends State<Home> {
     pet.dispose();
     super.dispose();
   }
+
   List<String> tasks = [];
 
   // Fetch tasks from Firestore in real-time
   Stream<List<String>> _getTasksFromFirestore() {
-    return db.getTasksDB('user1').asStream(); // Stream of tasks
+    return db.getTasksDB(loggedUserID).asStream(); // Stream of tasks
   }
 
   void _addTask(String taskTitle) {
@@ -57,17 +61,31 @@ class _HomeState extends State<Home> {
       // Remove the task from the list
       tasks.add(taskTitle);
     });
-    db.addTaskDb('user1', taskTitle); // Add task to Firestore
+    db.addTaskDb(loggedUserID, taskTitle); // Add task to Firestore
   }
 
-  void _toggleTaskDone(int index, String taskTitle) {
-
-    db.finishTaskDb('user1', taskTitle); // Mark task as completed in Firestore
+  void _toggleTaskDone(int index, String taskTitle) async {
+    db.finishTaskDb(
+        loggedUserID, taskTitle); // Mark task as completed in Firestore
     setState(() {
       // Remove the task from the list
       tasks.removeAt(index);
     });
-  }
+
+    final completedTasksToday = await db.getCompletedTasksTodayDB(loggedUserID);
+    final activeTasksToday = await db.getActiveTasksTodayDB(loggedUserID);
+
+    if (completedTasksToday < 5) {
+        rewardTasks();
+    }
+    else if (completedTasksToday == 5  ){
+      _showLimitReachedDialog();
+    } // else if
+    else{
+      _showSnackBar("No more rewards for today.");
+    }
+  }// void
+
 
   void _feedPet() {
     setState(() {
@@ -81,12 +99,27 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Stream<int> getTasksLimitStream() async* {
+    while (true) {
+      final completedToday = await db.getCompletedTasksTodayDB(loggedUserID);
+      final activeToday = await db.getActiveTasksTodayDB(loggedUserID);
+      yield completedToday;
+      await Future.delayed(Duration(seconds: 0)); // Poll every second
+    }
+  }
+
+  void rewardTasks() {
+    db.rewardTaskDB(loggedUserID, taskReward);
+
+    // Trigger the animation
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<String>>(
       stream: _taskStream, // Stream to get real-time updates
       builder: (context, snapshot) {
-         tasks = snapshot.data ?? [];
+        tasks = snapshot.data ?? [];
 
         return Scaffold(
           body: SafeArea(
@@ -124,7 +157,10 @@ class _HomeState extends State<Home> {
                       maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
                     ),
                     Positioned(
-                      top: MediaQuery.of(context).padding.top + 20,
+                      top: MediaQuery
+                          .of(context)
+                          .padding
+                          .top + 20,
                       left: 10,
                       child: Container(
                         padding: EdgeInsets.all(8),
@@ -138,12 +174,16 @@ class _HomeState extends State<Home> {
                           children: [
                             Text(
                               'Health: ${pet.health}',
-                              style: TextStyle(color: Colors.white, fontFamily: 'VT323', fontSize: 20),
+                              style: TextStyle(color: Colors.white,
+                                  fontFamily: 'VT323',
+                                  fontSize: 20),
                             ),
                             SizedBox(height: 4),
                             Text(
                               'Tank Level: ${pet.tankLevel}',
-                              style: TextStyle(color: Colors.white, fontFamily: 'VT323', fontSize: 20),
+                              style: TextStyle(color: Colors.white,
+                                  fontFamily: 'VT323',
+                                  fontSize: 20),
                             ),
                           ],
                         ),
@@ -190,7 +230,8 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.of(context).push(
-                                        MaterialPageRoute(builder: (context) => HistoryPage(),
+                                        MaterialPageRoute(
+                                          builder: (context) => HistoryPage(),
                                         )
                                     );
                                   },
@@ -216,7 +257,6 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () {
                                     showSettings(context);
-
                                   },
                                   child: SizedBox(
                                     width: 60,
@@ -241,12 +281,15 @@ class _HomeState extends State<Home> {
                             Column(
                               children: [
                                 StreamBuilder<String>(
-                                  stream: db.showCoins('user1'), // Listen to the stream for real-time updates
+                                  stream: db.showCoins(loggedUserID),
+                                  // Listen to the stream for real-time updates
                                   builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
                                       return CircularProgressIndicator(); // Show loading indicator while waiting for the result
                                     }
-                                    return Text('${snapshot.data}'); // Display the coins when data is available
+                                    return Text('${snapshot
+                                        .data}'); // Display the coins when data is available
                                   },
                                 ),
                                 Image.asset(
@@ -305,7 +348,10 @@ class _HomeState extends State<Home> {
                       maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
                     ),
                     Positioned(
-                      top: MediaQuery.of(context).padding.top + 20,
+                      top: MediaQuery
+                          .of(context)
+                          .padding
+                          .top + 20,
                       left: 10,
                       child: Container(
                         padding: EdgeInsets.all(8),
@@ -319,12 +365,16 @@ class _HomeState extends State<Home> {
                           children: [
                             Text(
                               'Health: ${pet.health}',
-                              style: TextStyle(color: Colors.white, fontFamily: 'VT323', fontSize: 20),
+                              style: TextStyle(color: Colors.white,
+                                  fontFamily: 'VT323',
+                                  fontSize: 20),
                             ),
                             SizedBox(height: 4),
                             Text(
                               'Tank Level: ${pet.tankLevel}',
-                              style: TextStyle(color: Colors.white, fontFamily: 'VT323', fontSize: 20),
+                              style: TextStyle(color: Colors.white,
+                                  fontFamily: 'VT323',
+                                  fontSize: 20),
                             ),
                           ],
                         ),
@@ -371,7 +421,8 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.of(context).push(
-                                        MaterialPageRoute(builder: (context) => HistoryPage(),
+                                        MaterialPageRoute(
+                                          builder: (context) => HistoryPage(),
                                         )
                                     );
                                   },
@@ -397,7 +448,6 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () {
                                     showSettings(context);
-
                                   },
                                   child: SizedBox(
                                     width: 60,
@@ -422,12 +472,15 @@ class _HomeState extends State<Home> {
                             Column(
                               children: [
                                 StreamBuilder<String>(
-                                  stream: db.showCoins('user1'), // Listen to the stream for real-time updates
+                                  stream: db.showCoins(loggedUserID),
+                                  // Listen to the stream for real-time updates
                                   builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
                                       return CircularProgressIndicator(); // Show loading indicator while waiting for the result
                                     }
-                                    return Text('${snapshot.data}'); // Display the coins when data is available
+                                    return Text('${snapshot
+                                        .data}'); // Display the coins when data is available
                                   },
                                 ),
                                 Image.asset(
@@ -470,7 +523,8 @@ class _HomeState extends State<Home> {
                       left: 0,
                       right: 0,
                       child: Container(
-                        height: 250, // Adjust height as needed
+                        height: 250,
+                        // Adjust height as needed
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -481,23 +535,39 @@ class _HomeState extends State<Home> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Tasks",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontFamily: 'VT323',
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.add, color: Colors.white),
-                                  onPressed: _showAddTaskPopup,
-                                ),
-                              ],
+                            StreamBuilder<int>(
+                              stream: getTasksLimitStream(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  return Text("Error: ${snapshot.error}");
+                                } else if (snapshot.hasData) {
+                                  int tasksLimit = snapshot.data ?? 0;
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Tasks $tasksLimit/5",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 30,
+                                          fontFamily: 'VT323',
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.add, color: Colors.white),
+                                        onPressed: _showAddTaskPopup,
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return Text("No data available");
+                                }
+                              },
                             ),
+
+
                             Expanded(
                               child: ListView.builder(
                                 itemCount: tasks.length,
@@ -505,7 +575,8 @@ class _HomeState extends State<Home> {
                                   String taskTitle = tasks[index];
                                   return CustomTaskTile(
                                     task: Task(title: taskTitle),
-                                    onToggle: () => _toggleTaskDone(index, taskTitle),
+                                    onToggle: () =>
+                                        _toggleTaskDone(index, taskTitle),
                                   );
                                 },
                               ),
@@ -524,38 +595,68 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _showAddTaskPopup() {
-    final TextEditingController taskController = TextEditingController();
+  void _showAddTaskPopup() async {
+        final TextEditingController taskController = TextEditingController();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("New Task"),
+              content: TextField(
+                controller: taskController,
+                decoration: InputDecoration(hintText: "Enter task title"),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    },
+                    child: Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      if (taskController.text.isNotEmpty) {
+                        _addTask(taskController.text);
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: Text("Add"),
+                  ),
+                ],
+              );
+            },
+          );
+  } // void
+
+  void _showSnackBar(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      behavior: SnackBarBehavior.floating, // Optional: Makes the SnackBar float
+      duration: Duration(seconds: 3),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _showLimitReachedDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("New Task"),
-          content: TextField(
-            controller: taskController,
-            decoration: InputDecoration(hintText: "Enter task title"),
-          ),
+          title: Text("Limit Reached"),
+          content: Text("You have reached the limit of 5 rewardable tasks."),
           actions: [
             TextButton(
+              child: Text("OK"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                if (taskController.text.isNotEmpty) {
-                  _addTask(taskController.text);
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Text("Add"),
             ),
           ],
         );
       },
     );
   }
+
 }
 
 class CustomTaskTile extends StatelessWidget {

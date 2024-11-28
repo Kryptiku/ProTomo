@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:protomo/pages/audio_service.dart';
 import 'package:protomo/pages/settings.dart';
 
-class StartPage extends StatelessWidget {
+class StartPage extends StatefulWidget {
   const StartPage({super.key});
 
   @override

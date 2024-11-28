@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:protomo/dbtest.dart';
 
 final db = FirestoreTest();
+String loggedUserID = 'user1';
 
 Widget buyButton(String foodId, String assetPath) {
   return FutureBuilder<String>(
@@ -25,7 +26,7 @@ Widget buyButton(String foodId, String assetPath) {
       return GestureDetector(
         onTap: () async {
           int itemCost = int.parse(snapshot.data ?? '0'); // Cost of the item
-          int userCoins = await db.getUserCoins('user1'); // Fetch user's coins
+          int userCoins = await db.getUserCoins(loggedUserID); // Fetch user's coins
 
           if (userCoins >= itemCost) {
             // Show confirmation dialog before purchasing
@@ -45,7 +46,7 @@ Widget buyButton(String foodId, String assetPath) {
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context); // Close the dialog
-                        db.buyItem(foodId); // Purchase the item
+                        db.buyItem(loggedUserID, foodId); // Purchase the item
                       },
                       child: Text('Confirm'),
                     ),
