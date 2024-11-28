@@ -8,7 +8,6 @@ import 'package:protomo/animations.dart';
 import 'package:protomo/pages/settings.dart';
 import 'package:protomo/pet_state.dart';
 import 'package:protomo/dirtiness_overlay.dart';
-
 import 'history.dart';
 
 void main() async {
@@ -27,12 +26,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late PetState pet;
+  late Future<List<String>> _tasksNamesFuture;
   final db = FirestoreTest();
+
+  // We now use a stream to get real-time updates from Firestore.
+  Stream<List<String>> _taskStream = Stream.empty();
 
   @override
   void initState() {
     super.initState();
     pet = PetState();
+    // Initialize the stream to get tasks from Firestore
+    _taskStream = _getTasksFromFirestore();
   }
 
   @override
@@ -40,58 +45,28 @@ class _HomeState extends State<Home> {
     pet.dispose();
     super.dispose();
   }
-  final List<Task> _tasks = [];
-  final List<Task> _historyTasks = [];
+  List<String> tasks = [];
+
+  // Fetch tasks from Firestore in real-time
+  Stream<List<String>> _getTasksFromFirestore() {
+    return db.getTasksDB('user1').asStream(); // Stream of tasks
+  }
 
   void _addTask(String taskTitle) {
     setState(() {
-      _tasks.add(Task(title: taskTitle, isDone: false));
+      // Remove the task from the list
+      tasks.add(taskTitle);
     });
-
-    db.addTaskDb('user1', taskTitle);
+    db.addTaskDb('user1', taskTitle); // Add task to Firestore
   }
 
-  void _showAddTaskPopup() {
-    final TextEditingController taskController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("New Task"),
-          content: TextField(
-            controller: taskController,
-            decoration: InputDecoration(hintText: "Enter task title"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                if (taskController.text.isNotEmpty) {
-                  _addTask(taskController.text);
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Text("Add"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  void _toggleTaskDone(int index, String taskTitle) {
 
-  void _toggleTaskDone(int index) {
-    Task completedTask = _tasks.removeAt(index);
+    db.finishTaskDb('user1', taskTitle); // Mark task as completed in Firestore
     setState(() {
-      completedTask.isDone = true;
-      _historyTasks.add(completedTask);
+      // Remove the task from the list
+      tasks.removeAt(index);
     });
-
-    db.finishTaskDb('user1', completedTask.title);
   }
 
   void _feedPet() {
@@ -106,13 +81,13 @@ class _HomeState extends State<Home> {
     });
   }
 
-  final test = FirestoreTest();
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<void>(
-        stream: Stream.periodic(Duration(seconds: 2)),
+    return StreamBuilder<List<String>>(
+      stream: _taskStream, // Stream to get real-time updates
       builder: (context, snapshot) {
+         tasks = snapshot.data ?? [];
+
         return Scaffold(
           body: SafeArea(
             top: false,
@@ -124,6 +99,8 @@ class _HomeState extends State<Home> {
               child: Container(
                 child: Stack(
                   children: [
+                    // Your existing UI components like background, buttons, etc.
+                    // I won't repeat the whole UI structure here to keep it concise.
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -213,8 +190,8 @@ class _HomeState extends State<Home> {
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) => HistoryPage(historyTasks: _historyTasks),
-                                      )
+                                        MaterialPageRoute(builder: (context) => HistoryPage(),
+                                        )
                                     );
                                   },
                                   child: SizedBox(
@@ -240,7 +217,7 @@ class _HomeState extends State<Home> {
                                   onTap: () {
                                     showSettings(context);
 
-                                    },
+                                  },
                                   child: SizedBox(
                                     width: 60,
                                     height: 60,
@@ -287,17 +264,198 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 GestureDetector(
-                                    onTap: () {
-                                      showClosetShop(context);
-                                      AudioService.playSoundFx();
-                                    },
-                                    child: SizedBox(
-                                      width: 60,
-                                      height: 60,
-                                      child: Image.asset(
-                                        'assets/buttons/briefcase.png',
-                                      ),
+                                  onTap: () {
+                                    showClosetShop(context);
+                                    AudioService.playSoundFx();
+                                  },
+                                  child: SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Image.asset(
+                                      'assets/buttons/briefcase.png',
                                     ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/main_bg.png"),
+                          fit: BoxFit.cover,
+                          alignment: Alignment(-0.4, 0),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: BobbingRotatingImage(
+                        imagePath: "assets/axolotl/Baby-Pink-Axolotl-2.png",
+                        bobbingDistance: 40.0,
+                        bobbingDuration: 5,
+                        rotationDuration: 50,
+                        width: 200,
+                        height: 200,
+                      ),),
+                    DirtinessOverlay(
+                      dirtinessLevel: pet.tankLevel,
+                      maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
+                    ),
+                    Positioned(
+                      top: MediaQuery.of(context).padding.top + 20,
+                      left: 10,
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white, width: 1),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Health: ${pet.health}',
+                              style: TextStyle(color: Colors.white, fontFamily: 'VT323', fontSize: 20),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Tank Level: ${pet.tankLevel}',
+                              style: TextStyle(color: Colors.white, fontFamily: 'VT323', fontSize: 20),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    Container(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+
+                                GestureDetector(
+                                  onTap: () {
+                                    print('clean');
+                                    _cleanTank();
+                                  },
+                                  child: SizedBox(
+                                    width: 60.0,
+                                    height: 60.0,
+                                    child: Image.asset(
+                                      'assets/buttons/calendar.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    AudioService.playSoundFx();
+                                    print('Start Timer');
+                                    Navigator.pushNamed(context, '/focus');
+                                  },
+                                  child: SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Image.asset(
+                                      'assets/buttons/start.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(builder: (context) => HistoryPage(),
+                                        )
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: 70,
+                                    height: 70,
+                                    child: Image.asset(
+                                      'assets/buttons/history.png',
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ]),
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 150, 0, 0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showSettings(context);
+
+                                  },
+                                  child: SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Image.asset(
+                                      'assets/buttons/settings.png',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Column(
+                              children: [
+                                StreamBuilder<String>(
+                                  stream: db.showCoins('user1'), // Listen to the stream for real-time updates
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return CircularProgressIndicator(); // Show loading indicator while waiting for the result
+                                    }
+                                    return Text('${snapshot.data}'); // Display the coins when data is available
+                                  },
+                                ),
+                                Image.asset(
+                                  'assets/buttons/coin.png',
+                                  height: 45,
+                                  fit: BoxFit.contain,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    AudioService.playBackgroundMusic();
+                                  },
+                                  child: SizedBox(
+                                    width: 25,
+                                    height: 25,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    showClosetShop(context);
+                                    AudioService.playSoundFx();
+                                  },
+                                  child: SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Image.asset(
+                                      'assets/buttons/briefcase.png',
+                                    ),
+                                  ),
                                 ),
                               ],
                             )
@@ -306,57 +464,54 @@ class _HomeState extends State<Home> {
                       ),
                     ),
 
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 100),
-                            child: Container(
-                              height: 200,
-                              width: 350,
-                              padding: EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.black54,
-                                borderRadius: BorderRadius.circular(12.0),
-                                border: Border.all(color: Colors.white, width: 2),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Tasks",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 50,
-                                          fontFamily: 'VT323',
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.add, color: Colors.white),
-                                        onPressed: _showAddTaskPopup,
-                                      ),
-                                    ],
+                    // Tasks list widget
+                    Positioned(
+                      bottom: 100, // Adjust based on UI requirements
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 250, // Adjust height as needed
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(12.0),
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Tasks",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontFamily: 'VT323',
                                   ),
-                                  Expanded(
-                                    child: ListView.builder(
-                                      itemCount: _tasks.length,
-                                      itemBuilder: (context, index) {
-                                        return CustomTaskTile(
-                                          task: _tasks[index],
-                                          onToggle: () => _toggleTaskDone(index),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.add, color: Colors.white),
+                                  onPressed: _showAddTaskPopup,
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: tasks.length,
+                                itemBuilder: (context, index) {
+                                  String taskTitle = tasks[index];
+                                  return CustomTaskTile(
+                                    task: Task(title: taskTitle),
+                                    onToggle: () => _toggleTaskDone(index, taskTitle),
+                                  );
+                                },
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -365,7 +520,40 @@ class _HomeState extends State<Home> {
             ),
           ),
         );
-      }
+      },
+    );
+  }
+
+  void _showAddTaskPopup() {
+    final TextEditingController taskController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("New Task"),
+          content: TextField(
+            controller: taskController,
+            decoration: InputDecoration(hintText: "Enter task title"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                if (taskController.text.isNotEmpty) {
+                  _addTask(taskController.text);
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text("Add"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -378,19 +566,11 @@ class CustomTaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Create a TextPainter to measure text width
     final TextStyle textStyle = TextStyle(
       fontFamily: 'VT323',
       fontSize: 30,
       color: Colors.white,
     );
-
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(text: task.title, style: textStyle),
-      textDirection: TextDirection.ltr,
-    )..layout();
-
-    final double textWidth = textPainter.width;
 
     return ListTile(
       title: Stack(
@@ -400,16 +580,6 @@ class CustomTaskTile extends StatelessWidget {
             task.title,
             style: textStyle,
           ),
-          if (task.isDone)
-            Positioned(
-              left: 0,
-              top: 15, // Adjust to center the line over the text
-              child: Container(
-                width: textWidth, // Match line length to text width
-                height: 3, // Thickness of the line
-                color: Colors.redAccent, // Color of the line
-              ),
-            ),
         ],
       ),
       trailing: Checkbox(

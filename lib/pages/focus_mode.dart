@@ -38,6 +38,8 @@ class _TimerKnobState extends State<TimerKnob> {
   final int maxMinutes = 180; // Maximum timer value
   final int increment = 5; // Timer increments in minutes
 
+  int coinsAwarded = 1;
+
   @override
   Widget build(BuildContext context) {
     double radius = 100.0; // Radius of the larger circle
@@ -92,6 +94,7 @@ class _TimerKnobState extends State<TimerKnob> {
                       // Set the angle for the small circle
                       angle = (timerValue / maxMinutes.toDouble()) * (2 * pi) - (pi / 2); // Adjust angle based on timer value
 
+                      coinsAwarded = calculateCoins(timerValue);
                       // Update the state to reflect the changes
                       setState(() {});
                     },
@@ -127,6 +130,7 @@ class _TimerKnobState extends State<TimerKnob> {
                             // ),
                           ),
 
+
                           // Small orbiting circle with custom image
                           Transform.translate(
                             offset: Offset(smallCircleX, smallCircleY),
@@ -147,13 +151,31 @@ class _TimerKnobState extends State<TimerKnob> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(height: 100),
-
                 SizedBox(height: 20),
                 // Start Timer button
                 Container(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '+$coinsAwarded',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.yellow,
+                            ),
+                          ),
+                          SizedBox(width: 4,),
+                          Image.asset(
+                            'assets/buttons/coin.png',
+                            width: 20,
+                            height: 24,
+                          ),
+                        ],
+                      ),
                       // Display timer countdown
                       Text(
                         isCountingDown ? formattedTime : '$timerValue:00',
@@ -235,6 +257,10 @@ class _TimerKnobState extends State<TimerKnob> {
     );
   }
 
+  int calculateCoins(int minutes) {
+    return minutes ~/ 10;
+  }
+
   void startTimer() {
     setState(() {
       buttonState = 'stop.png';
@@ -250,6 +276,7 @@ class _TimerKnobState extends State<TimerKnob> {
           countdownTimer?.cancel();
           isCountingDown = false; // Stop countdown when time runs out
           buttonState = 'start.png';
+          print('Timer done, you earned $coinsAwarded coins');
         }
       });
     });

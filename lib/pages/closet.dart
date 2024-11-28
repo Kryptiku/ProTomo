@@ -3,7 +3,7 @@ import 'package:protomo/dbtest.dart';
 
 final db = FirestoreTest();
 
-Widget foodButton(String foodId, String assetPath) {
+Widget buyButton(String foodId, String assetPath) {
   return FutureBuilder<String>(
     future: db.getItemCost(foodId), // Fetch the cost dynamically
     builder: (context, snapshot) {
@@ -111,8 +111,6 @@ Widget foodButton(String foodId, String assetPath) {
     },
   );
 }
-
-
 
 
 void showClosetShop(BuildContext context) {
@@ -313,14 +311,14 @@ void showClosetShop(BuildContext context) {
                                 spacing: 10.0,
                                 runSpacing: 40.0, //this determines the spacing when it goes to the next line
                                 children: [
-                                  foodButton('food1', 'assets/buttons/chicken.png'),
-                                  foodButton('meds1', 'assets/buttons/medicine.png'),
-                                  foodButton('food1', 'assets/buttons/chicken.png'),
-                                  foodButton('meds1', 'assets/buttons/medicine.png'),
-                                  foodButton('food1', 'assets/buttons/chicken.png'),
-                                  foodButton('meds1', 'assets/buttons/medicine.png'),
-                                  foodButton('food1', 'assets/buttons/chicken.png'),
-                                  foodButton('meds1', 'assets/buttons/medicine.png')
+                                  buyButton('food1', 'assets/buttons/chicken.png'),
+                                  buyButton('meds1', 'assets/buttons/medicine.png'),
+                                  buyButton('food1', 'assets/buttons/chicken.png'),
+                                  buyButton('meds1', 'assets/buttons/medicine.png'),
+                                  buyButton('food1', 'assets/buttons/chicken.png'),
+                                  buyButton('meds1', 'assets/buttons/medicine.png'),
+                                  buyButton('food1', 'assets/buttons/chicken.png'),
+                                  buyButton('meds1', 'assets/buttons/medicine.png')
                                 ],
                               )
                             ],

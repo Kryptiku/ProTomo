@@ -3,26 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreTest {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<void> testAddData() async {
-
-      // Define the collection and data
-      String collectionName = 'burat';
-      String documentName = 'kupal';
-      final city = <String, String>{
-        "name": "Los Angeles",
-        "state": "CA",
-        "country": "USA"
-      };
-
-      try {
-      // Add the document to the specified collection
-      db.collection(collectionName).doc(documentName).set(city);
-      print("Document added successfully!");
-    } catch (e) {
-      print("Error adding document: $e");
-    }
-  }
-
   Future<void> buyItem(String foodId) async {
     try {
       // Get the item document from the store collection
@@ -88,8 +68,6 @@ class FirestoreTest {
 
   Future<void> addTaskDb(String userID, String taskName) async {
     try {
-
-
       // Prepare the task data
       final data = <String, dynamic>{
         "dateEntered": DateTime.now(),
@@ -126,6 +104,63 @@ class FirestoreTest {
       print("Error completing task '$taskName': $e");
     }
   }
+
+  Future<List<String>> getCompletedTasksDB(String userID) async {
+    final completedTaskRef = db.collection('users').doc(userID).collection('completedTasks');
+
+    try {
+      // Fetch documents from Firestore, ordered by the 'dateCompleted' field
+      final querySnapshot = await completedTaskRef
+          .orderBy('dateCompleted', descending: true) // Order by 'dateCompleted' field in descending order
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        print("No documents found in 'completedTasks'");
+        return [];
+      }
+
+      // Extract the 'taskName' field from each document
+      List<String> completedTaskNames = querySnapshot.docs
+          .where((doc) => int.tryParse(doc.id) != null) // Ensure document ID is a number (optional check)
+          .map((doc) => doc.data()['taskName'] as String) // Extract the 'taskName' field
+          .toList();
+
+      return completedTaskNames;
+    } catch (e, stackTrace) {
+      print("Error fetching completed tasks: $e");
+      print(stackTrace);
+      return [];
+    }
+  }
+
+
+  Future<List<String>> getTasksDB(String userID) async {
+    final completedTaskRef = db.collection('users').doc(userID).collection('tasks');
+
+    try {
+      // Fetch the tasks from F irestore
+      final querySnapshot = await completedTaskRef.get();
+      print("Fetched ${querySnapshot.docs.length} tasks");
+
+      if (querySnapshot.docs.isEmpty) {
+        print("No tasks found in 'tasks'");
+        return [];
+      }
+
+      // Extract task names from the documents
+      List<String> taskNames = querySnapshot.docs
+          .map((doc) => doc['taskName'] as String)
+          .toList();
+
+      print("Task names: $taskNames");
+      return taskNames;
+    } catch (e, stackTrace) {
+      print("Error fetching tasks: $e");
+      print(stackTrace);
+      return [];
+    }
+  }
+
 
 
 } // class
