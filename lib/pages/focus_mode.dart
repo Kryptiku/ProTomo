@@ -99,26 +99,26 @@ class _TimerKnobState extends State<TimerKnob> {
                       setState(() {});
                     },
                     child: Container(
-                      width: (radius + orbitOffset) * 2,
-                      height: (radius + orbitOffset) * 2,
+                      width: (radius + orbitOffset) * 3,
+                      height: (radius + orbitOffset) * 3,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
                           BobbingRotatingImage(
-                            imagePath: 'assets/axolotl/Baby-Pink-Axolotl-2.png',
-                            bobbingDistance: 30.0,
-                            bobbingDuration: 5,
+                            imagePath: 'assets/axolotl/pinkfloating.png',
+                            bobbingDistance: 20.0,
+                            bobbingDuration: 7,
                             rotationDuration: 50,
                             width: 200,
                             height: 200,
                           ),
                           Opacity(
-                            opacity: 0.7,
+                            opacity: 0.6,
                             child: BobbingRotatingImage(
                               imagePath: 'assets/big_bubble.png',
                               width: radius * 3,
                               height: radius * 3,
-                              bobbingDistance: 30,
+                              bobbingDistance: 20,
                               bobbingDuration: 6,
                               rotationDuration: 200,
                               clockwise: false,
@@ -163,16 +163,21 @@ class _TimerKnobState extends State<TimerKnob> {
                           Text(
                             '+$coinsAwarded',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: Colors.yellow,
                             ),
                           ),
-                          SizedBox(width: 4,),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                            width: 5,
+                            ),
                           Image.asset(
                             'assets/buttons/coin.png',
-                            width: 20,
-                            height: 24,
+                            width: 44,
+                            height: 44,
                           ),
                         ],
                       ),
@@ -185,7 +190,7 @@ class _TimerKnobState extends State<TimerKnob> {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 30,),
+                      SizedBox(height: 20,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -286,34 +291,98 @@ class _TimerKnobState extends State<TimerKnob> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Stop Focus Mode?"),
-          content: const Text("Are you sure you want to stop focus mode?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("No"),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          backgroundColor: Colors.transparent,
+          child: Container(
+            height: 250, // Height of the dialog
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(color: Colors.white, width: 2),
             ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  isCountingDown = false;
-                  buttonState = 'start.png';
-                  countdownTimer?.cancel();
-                  timerValue = 0;
-                  angle = -pi / 2;
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text("Yes"),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Even spacing between elements
+              children: [
+                // Title
+                const Text(
+                  "Stop Focus Mode?",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 23,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                // Description
+                const Text(
+                  "Are you sure you want to stop focus mode?",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                // Action Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        side: const BorderSide(color: Colors.white, width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close dialog
+                      },
+                      child: const Text(
+                        "No",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.white),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        // Add "Yes" functionality here
+                      },
+                      child: const Text(
+                        "Yes",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
   }
+
+
 
   @override
   void dispose() {

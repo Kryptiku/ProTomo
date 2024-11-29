@@ -145,7 +145,7 @@ class _HomeState extends State<Home> {
                     ),
                     Center(
                       child: BobbingRotatingImage(
-                        imagePath: "assets/axolotl/Baby-Pink-Axolotl-2.png",
+                        imagePath: "assets/axolotl/pinkfloating.png",
                         bobbingDistance: 40.0,
                         bobbingDuration: 5,
                         rotationDuration: 50,
@@ -596,37 +596,96 @@ class _HomeState extends State<Home> {
   }
 
   void _showAddTaskPopup() async {
-        final TextEditingController taskController = TextEditingController();
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("New Task"),
-              content: TextField(
-                controller: taskController,
-                decoration: InputDecoration(hintText: "Enter task title"),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    },
-                    child: Text("Cancel"),
+    final TextEditingController taskController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0), // Rounded corners
+          ),
+          backgroundColor: Colors.transparent, // Transparent background
+          child: Container(
+            height: 250, // Height of the popup
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.black54, // Dark background with transparency
+              borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(color: Colors.white, width: 2), // White border
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "New Task",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 23,
+                    color: Colors.white, // Text color for visibility
                   ),
-                  TextButton(
-                    onPressed: () {
-                      if (taskController.text.isNotEmpty) {
-                        _addTask(taskController.text);
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Text("Add"),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Enter task title:",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
                   ),
-                ],
-              );
-            },
-          );
-  } // void
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: taskController,
+                  decoration: InputDecoration(
+                    hintText: "Enter task title",
+                    hintStyle: TextStyle(color: Colors.white60), // Light hint text
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 1),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  style: TextStyle(color: Colors.white), // Text color inside the field
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        if (taskController.text.isNotEmpty) {
+                          _addTask(taskController.text); // Add task functionality
+                          Navigator.of(context).pop(); // Close dialog after adding task
+                        }
+                      },
+                      child: const Text(
+                        "Add",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   void _showSnackBar(String message) {
     final snackBar = SnackBar(
