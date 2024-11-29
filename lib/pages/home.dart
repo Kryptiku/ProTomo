@@ -9,6 +9,7 @@ import 'package:protomo/pages/settings.dart';
 import 'package:protomo/pet_state.dart';
 import 'package:protomo/dirtiness_overlay.dart';
 import 'history.dart';
+import 'dart:math' as math;
 
 String loggedUserID = 'user1';
 int taskReward = 5;
@@ -27,10 +28,42 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with TickerProviderStateMixin {
   late PetState pet;
   late Future<List<String>> _tasksNamesFuture;
   final db = FirestoreTest();
+
+  //Coins Animation Params
+  final int _coinValue = 5; //placeholder value
+  final List<CoinAnimation> _animations = [];
+
+  void _showCoinAnimation() {
+    final random = math.Random();
+    final startX = MediaQuery.of(context).size.width / 2 + random.nextDouble() * 40 - 20;
+    final endX = startX + random.nextDouble() * 80 - 40;
+
+    final controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
+    final animation = CoinAnimation(
+      controller: controller,
+      startX: startX,
+      endX: endX,
+    );
+
+    setState(() {
+      _animations.add(animation);
+    });
+
+    controller.forward().then((_) {
+      setState(() {
+        _animations.remove(animation);
+      });
+      controller.dispose();
+    });
+  }
 
   // We now use a stream to get real-time updates from Firestore.
   Stream<List<String>> _taskStream = Stream.empty();
@@ -46,6 +79,11 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     pet.dispose();
+    super.dispose();
+
+    for (var animation in _animations) {
+      animation.controller.dispose();
+    }
     super.dispose();
   }
 
@@ -109,19 +147,22 @@ class _HomeState extends State<Home> {
   }
 
   void rewardTasks() {
-    db.rewardTaskDB(loggedUserID, taskReward);
 
+    db.rewardTaskDB(loggedUserID, taskReward);
+    _showCoinAnimation();
     // Trigger the animation
   }
 
   @override
   Widget build(BuildContext context) {
+
     return StreamBuilder<List<String>>(
       stream: _taskStream, // Stream to get real-time updates
       builder: (context, snapshot) {
         tasks = snapshot.data ?? [];
 
         return Scaffold(
+
           body: SafeArea(
             top: false,
             bottom: false,
@@ -585,13 +626,40 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
+                    ..._animations.map((animation) => AnimatedBuilder(
+                        animation: animation.controller,
+                        builder: (context, child) {
+                          final value = animation.controller.value;
+                          final yOffset = 100 * value;
+                          final xOffset = (animation.endX - animation.startX) * math.sin(value * math.pi);
+                          return Positioned(
+                            left: animation.startX + xOffset,
+                            bottom: MediaQuery.of(context).size.height / 2 + 25 + yOffset,
+                            child: Opacity(
+                              opacity: 1 - value,
+                                child: Column(
+                                  children: [
+                                    Image.asset(
+                                      'assets/buttons/coin.png',
+                                      width: 50,
+                                      height: 50,
+                                    ),
+                                    Text('+$_coinValue', style: const TextStyle(fontSize: 20, color: Colors.orange),),
+                                  ],
+                                ),
+                            ),
+                          );
+                        },
+                    )).toList(),
                   ],
                 ),
               ),
             ),
           ),
+
         );
       },
+
     );
   }
 
@@ -757,3 +825,12 @@ class Task {
 
   Task({required this.title, this.isDone = false});
 }
+
+class CoinAnimation {
+  final AnimationController controller;
+  final double startX;
+  final double endX;
+
+  CoinAnimation({required this.controller, required this.startX, required this.endX});
+}
+
