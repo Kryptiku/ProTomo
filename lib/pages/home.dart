@@ -89,7 +89,7 @@ class _HomeState extends State<Home> {
 
   void _feedPet() {
     setState(() {
-      pet.feed(10);
+      pet.feed(5);
     });
   }
 
@@ -117,7 +117,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<String>>(
-      stream: _taskStream, // Stream to get real-time updates
+      stream: _taskStream,
       builder: (context, snapshot) {
         tasks = snapshot.data ?? [];
 
@@ -132,8 +132,169 @@ class _HomeState extends State<Home> {
               child: Container(
                 child: Stack(
                   children: [
-                    // Your existing UI components like background, buttons, etc.
-                    // I won't repeat the whole UI structure here to keep it concise.
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/main_bg.png"),
+                          fit: BoxFit.cover,
+                          alignment: Alignment(-0.4, 0),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: BobbingRotatingImage(
+                        imagePath: "assets/axolotl/Baby-Pink-Axolotl-2.png",
+                        bobbingDistance: 40.0,
+                        bobbingDuration: 5,
+                        rotationDuration: 50,
+                        width: 200,
+                        height: 200,
+                      ),),
+
+                    StreamBuilder<Map<String, int>>(
+                      stream: pet.stateStream,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        final health = snapshot.data?['health']?.clamp(0, PetState.MAX_HEALTH) ?? 0;
+                        final tankLevel = snapshot.data?['tankLevel']?.clamp(0, PetState.MAX_TANK_LEVEL) ?? 0;
+
+                        print("StreamBuilder -> Health: $health, Tank Level: $tankLevel");
+
+                        // Log the data received from the stream
+                        print("Health: $health, Tank Level: $tankLevel");
+
+                        return Stack(
+                          children: [
+                            DirtinessOverlay(
+                              dirtinessLevel: tankLevel,
+                              maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
+                            ),
+                            Positioned(
+                              top: MediaQuery.of(context).padding.top + 20,
+                              left: 10,
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.white, width: 1),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Health: $health',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'VT323',
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      'Tank Level: $tankLevel',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'VT323',
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+
+                    Container(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+
+                                GestureDetector(
+                                  onTap: () {
+                                    print('clean');
+                                    _cleanTank();
+                                    _feedPet();
+
+                                  },
+                                  child: SizedBox(
+                                    width: 60.0,
+                                    height: 60.0,
+                                    child: Image.asset(
+                                      'assets/buttons/calendar.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    AudioService.playSoundFx();
+                                    print('Start Timer');
+                                    Navigator.pushNamed(context, '/focus');
+                                  },
+                                  child: SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Image.asset(
+                                      'assets/buttons/start.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => HistoryPage(),
+                                        )
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: 70,
+                                    height: 70,
+                                    child: Image.asset(
+                                      'assets/buttons/history.png',
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ]),
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 150, 0, 0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showSettings(context);
+                                  },
+                                  child: SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Image.asset(
+                                      'assets/buttons/settings.png',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -308,199 +469,13 @@ class _HomeState extends State<Home> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    showClosetShop(context);
-                                    AudioService.playSoundFx();
-                                  },
-                                  child: SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Image.asset(
-                                      'assets/buttons/briefcase.png',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/main_bg.png"),
-                          fit: BoxFit.cover,
-                          alignment: Alignment(-0.4, 0),
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: BobbingRotatingImage(
-                        imagePath: "assets/axolotl/Baby-Pink-Axolotl-2.png",
-                        bobbingDistance: 40.0,
-                        bobbingDuration: 5,
-                        rotationDuration: 50,
-                        width: 200,
-                        height: 200,
-                      ),),
-                    DirtinessOverlay(
-                      dirtinessLevel: pet.tankLevel,
-                      maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
-                    ),
-                    Positioned(
-                      top: MediaQuery
-                          .of(context)
-                          .padding
-                          .top + 20,
-                      left: 10,
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.white, width: 1),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Health: ${pet.health}',
-                              style: TextStyle(color: Colors.white,
-                                  fontFamily: 'VT323',
-                                  fontSize: 20),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Tank Level: ${pet.tankLevel}',
-                              style: TextStyle(color: Colors.white,
-                                  fontFamily: 'VT323',
-                                  fontSize: 20),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-
-                                GestureDetector(
-                                  onTap: () {
-                                    print('clean');
-                                    _cleanTank();
-                                  },
-                                  child: SizedBox(
-                                    width: 60.0,
-                                    height: 60.0,
-                                    child: Image.asset(
-                                      'assets/buttons/calendar.png',
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    AudioService.playSoundFx();
-                                    print('Start Timer');
-                                    Navigator.pushNamed(context, '/focus');
-                                  },
-                                  child: SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Image.asset(
-                                      'assets/buttons/start.png',
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => HistoryPage(),
-                                        )
+                                    showDialog(
+                                      context: context, // Ensure this is the correct context
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) {
+                                        return ClosetShopDialog(userID: loggedUserID);
+                                      },
                                     );
-                                  },
-                                  child: SizedBox(
-                                    width: 70,
-                                    height: 70,
-                                    child: Image.asset(
-                                      'assets/buttons/history.png',
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
-                          ]),
-                    ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 150, 0, 0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    showSettings(context);
-                                  },
-                                  child: SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Image.asset(
-                                      'assets/buttons/settings.png',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Column(
-                              children: [
-                                StreamBuilder<String>(
-                                  stream: db.showCoins(loggedUserID),
-                                  // Listen to the stream for real-time updates
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return CircularProgressIndicator(); // Show loading indicator while waiting for the result
-                                    }
-                                    return Text('${snapshot
-                                        .data}'); // Display the coins when data is available
-                                  },
-                                ),
-                                Image.asset(
-                                  'assets/buttons/coin.png',
-                                  height: 45,
-                                  fit: BoxFit.contain,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    AudioService.playBackgroundMusic();
-                                  },
-                                  child: SizedBox(
-                                    width: 25,
-                                    height: 25,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    showClosetShop(context);
-                                    AudioService.playSoundFx();
                                   },
                                   child: SizedBox(
                                     width: 60,

@@ -11,11 +11,11 @@ class FirestoreTest {
       final DocumentSnapshot storeSnapshot = await storeItemDoc.get();
 
       if (storeSnapshot.exists) {
-        // Retrieve the item's cost
+        // Retrieve the item's data
         final Map<String, dynamic> itemData = storeSnapshot.data() as Map<String, dynamic>;
         final int cost = itemData['cost'];
 
-        // Reference the user's coins
+        // Reference the user's document
         final userDoc = db.collection('users').doc(userID);
         final DocumentSnapshot userSnapshot = await userDoc.get();
 
@@ -38,7 +38,10 @@ class FirestoreTest {
             if (itemExists) {
               await userInventoryDoc.update({'quantity': FieldValue.increment(1)});
             } else {
-              await userInventoryDoc.set({'quantity': 1, 'cost': cost});
+              // Copy all fields from the store item and add 'quantity'
+              final Map<String, dynamic> newItemData = Map<String, dynamic>.from(itemData);
+              newItemData['quantity'] = 1; // Add quantity field for the user's inventory
+              await userInventoryDoc.set(newItemData);
             }
 
             print("Item bought successfully!");
@@ -55,6 +58,7 @@ class FirestoreTest {
       print("Error occurred: $e");
     }
   }
+
 
   Future<int> getUserCoins(String userID) async {
     return db.collection('users').doc(userID).snapshots().map((snapshot) => snapshot['coins'] as int).first; // Gets the first value from the stream
@@ -87,7 +91,7 @@ class FirestoreTest {
     try {
       // Fetch the number of completed tasks
       var querySnapshot = await db.collection('users').doc(userID).collection('completedTasks').get();
-      int taskNum = querySnapshot.docs.length;
+      int taskNum = querySnapshot.docs.length; //get amount of tasks
 
       // Generate a new task number and name
       int newTaskNum = taskNum + 1;
@@ -221,6 +225,76 @@ class FirestoreTest {
     final int updatedCoins = currentCoins + reward;
 
     await userRef.update({'coins': updatedCoins});
+  }
+
+  Stream<List<Map<String, String>>> loadInventoryItemsDB(String userID) {
+    try {
+      final userInventoryRef = db.collection('users').doc(userID).collection('inventory');
+
+      // Using snapshots() for real-time updates
+      return userInventoryRef.snapshots().map((querySnapshot) {
+        // Transform each document into a map containing id and assetPath
+        final inventoryItems = querySnapshot.docs.map((doc) {
+          return {
+            "id": doc.id, // Document ID
+            "assetPath": doc.data()['path'] as String, // Asset path from document data
+          };
+        }).toList();
+
+        return inventoryItems; // Return the list of maps
+      });
+    } catch (e) {
+      // Handle errors (e.g., log them, display an error message)
+      print('Error fetching inventory items: $e');
+      return Stream.value([]); // Return an empty list as a stream in case of error
+    }
+  }
+
+  Future<Map<String, dynamic>> getItemInfoDB(String userID, String itemID) async {
+    try {
+      final itemRef = db.collection('users').doc(userID).collection('inventory').doc(itemID);
+      final itemSnapshot = await itemRef.get();
+
+      if (itemSnapshot.exists) {
+        final itemData = itemSnapshot.data();
+        return {
+          "quantity": itemData?['quantity'] as int,
+          "replenish": itemData?['replenish'] as int,
+        };
+      } else {
+        // If the document doesn't exist, return default or empty values
+        print('Item not found: $itemID');
+        return {
+          "quantity": 0,
+          "replenish": 0,
+        };
+      }
+    } catch (e) {
+      // Handle errors (e.g., log them, display an error message)
+      print('Error fetching item info: $e');
+      return {
+        "quantity": 0, // Default value in case of error
+        "replenish": 0, // Default value in case of error
+      };
+    }
+  }
+
+  Future<void> useItemDB(String userID, String itemID) async {
+    final itemRef = db.collection('users').doc(userID).collection('inventory').doc(itemID);
+    final itemSnapshot = await itemRef.get();
+
+    // final Map<String, dynamic> itemData = storeSnapshot.data() as Map<String, dynamic>;
+    // final int cost = itemData['cost'];
+
+    final Map<String, dynamic> itemData = itemSnapshot.data() as Map<String, dynamic>;
+    final int itemQuantity = (itemData['quantity']) ?? 0;
+
+    if (itemQuantity <= 1) {
+      await itemRef.delete();
+    }
+    else {
+      await itemRef.update({'quantity': FieldValue.increment(-1)});
+    }
   }
 
 } // class
