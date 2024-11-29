@@ -34,8 +34,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   final db = FirestoreTest();
 
   //Coins Animation Params
-  final int _coinValue = 5;
-  int _totalCoins = 0;
+  final int _coinValue = 5; //placeholder value
   final List<CoinAnimation> _animations = [];
 
   void _showCoinAnimation() {
@@ -60,7 +59,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
     controller.forward().then((_) {
       setState(() {
-        _totalCoins += _coinValue;
         _animations.remove(animation);
       });
       controller.dispose();
