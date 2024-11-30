@@ -8,6 +8,7 @@ import 'package:protomo/animations.dart';
 import 'package:protomo/pages/settings.dart';
 import 'package:protomo/pet_state.dart';
 import 'package:protomo/dirtiness_overlay.dart';
+import 'package:provider/provider.dart';
 import 'history.dart';
 import 'dart:math' as math;
 
@@ -127,7 +128,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   void _feedPet() {
     setState(() {
-      pet.feed(10);
+      pet.feed(50);
     });
   }
 
@@ -155,6 +156,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final pet = context.watch<PetState>();
 
     return StreamBuilder<List<String>>(
       stream: _taskStream, // Stream to get real-time updates
@@ -242,7 +244,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                 GestureDetector(
                                   onTap: () {
                                     print('clean');
-                                    _cleanTank();
+                                    pet.cleanTank();
+                                   pet.feed(50);
                                   },
                                   child: SizedBox(
                                     width: 60.0,
@@ -325,201 +328,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                   stream: db.showCoins(loggedUserID),
                                   // Listen to the stream for real-time updates
                                   builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return CircularProgressIndicator(); // Show loading indicator while waiting for the result
-                                    }
-                                    return Text('${snapshot
-                                        .data}'); // Display the coins when data is available
-                                  },
-                                ),
-                                Image.asset(
-                                  'assets/buttons/coin.png',
-                                  height: 45,
-                                  fit: BoxFit.contain,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    AudioService.playBackgroundMusic();
-                                  },
-                                  child: SizedBox(
-                                    width: 25,
-                                    height: 25,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    showClosetShop(context);
-                                    AudioService.playSoundFx();
-                                  },
-                                  child: SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Image.asset(
-                                      'assets/buttons/briefcase.png',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/main_bg.png"),
-                          fit: BoxFit.cover,
-                          alignment: Alignment(-0.4, 0),
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: BobbingRotatingImage(
-                        imagePath: "assets/axolotl/Baby-Pink-Axolotl-2.png",
-                        bobbingDistance: 40.0,
-                        bobbingDuration: 5,
-                        rotationDuration: 50,
-                        width: 200,
-                        height: 200,
-                      ),),
-                    DirtinessOverlay(
-                      dirtinessLevel: pet.tankLevel,
-                      maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
-                    ),
-                    Positioned(
-                      top: MediaQuery
-                          .of(context)
-                          .padding
-                          .top + 20,
-                      left: 10,
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.white, width: 1),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Health: ${pet.health}',
-                              style: TextStyle(color: Colors.white,
-                                  fontFamily: 'VT323',
-                                  fontSize: 20),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Tank Level: ${pet.tankLevel}',
-                              style: TextStyle(color: Colors.white,
-                                  fontFamily: 'VT323',
-                                  fontSize: 20),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-
-                                GestureDetector(
-                                  onTap: () {
-                                    print('clean');
-                                    _cleanTank();
-                                  },
-                                  child: SizedBox(
-                                    width: 60.0,
-                                    height: 60.0,
-                                    child: Image.asset(
-                                      'assets/buttons/calendar.png',
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    AudioService.playSoundFx();
-                                    print('Start Timer');
-                                    Navigator.pushNamed(context, '/focus');
-                                  },
-                                  child: SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Image.asset(
-                                      'assets/buttons/start.png',
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => HistoryPage(),
-                                        )
-                                    );
-                                  },
-                                  child: SizedBox(
-                                    width: 70,
-                                    height: 70,
-                                    child: Image.asset(
-                                      'assets/buttons/history.png',
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
-                          ]),
-                    ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 150, 0, 0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    showSettings(context);
-                                  },
-                                  child: SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Image.asset(
-                                      'assets/buttons/settings.png',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Column(
-                              children: [
-                                StreamBuilder<String>(
-                                  stream: db.showCoins(loggedUserID),
-                                  // Listen to the stream for real-time updates
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return CircularProgressIndicator(); // Show loading indicator while waiting for the result
-                                    }
+                                    // if (snapshot.connectionState ==
+                                    //     ConnectionState.waiting) {
+                                    //   return CircularProgressIndicator(); // Show loading indicator while waiting for the result
+                                    // }
                                     return Text('${snapshot
                                         .data}'); // Display the coins when data is available
                                   },
@@ -579,9 +391,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             StreamBuilder<int>(
                               stream: getTasksLimitStream(),
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
-                                } else if (snapshot.hasError) {
+                                // if (snapshot.connectionState == ConnectionState.waiting) {
+                                //   return CircularProgressIndicator();
+                                // }
+                                  if (snapshot.hasError) {
                                   return Text("Error: ${snapshot.error}");
                                 } else if (snapshot.hasData) {
                                   int tasksLimit = snapshot.data ?? 0;
@@ -607,8 +420,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                 }
                               },
                             ),
-
-
                             Expanded(
                               child: ListView.builder(
                                 itemCount: tasks.length,

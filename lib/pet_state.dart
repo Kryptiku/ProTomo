@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 
-class PetState {
+class PetState extends ChangeNotifier {
   static const int MAX_HEALTH = 100;
   static const int MAX_TANK_LEVEL = 3;
 
   int _health = MAX_HEALTH;
   int _tankLevel = 0;
   late Timer _timer;
+  Duration updateDuration = Duration(seconds: 5); // Adjustable duration
 
   PetState() {
     _health = MAX_HEALTH;
@@ -20,7 +22,7 @@ class PetState {
   int get tankLevel => _tankLevel;
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(minutes: 1), (timer) {
+    _timer = Timer.periodic(updateDuration, (timer) {
       _updateState();
     });
   }
@@ -34,11 +36,13 @@ class PetState {
       _tankLevel++;
     }
 
+    notifyListeners(); // Notify UI listeners of the change
     _saveState();
   }
 
   void feed(int amount) {
     _health = (_health + amount).clamp(0, MAX_HEALTH);
+    notifyListeners(); // Notify UI listeners of the change
     _saveState();
   }
 
@@ -46,6 +50,7 @@ class PetState {
     if (_tankLevel > 0) {
       _tankLevel--;
     }
+    notifyListeners(); // Notify UI listeners of the change
     _saveState();
   }
 
@@ -53,6 +58,7 @@ class PetState {
     final prefs = await SharedPreferences.getInstance();
     _health = prefs.getInt('health') ?? MAX_HEALTH;
     _tankLevel = prefs.getInt('tankLevel') ?? 0;
+    notifyListeners(); // Notify UI listeners after loading
   }
 
   Future<void> _saveState() async {
@@ -63,5 +69,6 @@ class PetState {
 
   void dispose() {
     _timer.cancel();
+    super.dispose();
   }
 }
