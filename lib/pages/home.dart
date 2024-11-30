@@ -174,8 +174,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               child: Container(
                 child: Stack(
                   children: [
-                    // Your existing UI components like background, buttons, etc.
-                    // I won't repeat the whole UI structure here to keep it concise.
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -351,8 +349,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    showClosetShop(context);
-                                    AudioService.playSoundFx();
+                                    showDialog(
+                                      context: context, // Ensure this is the correct context
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) {
+                                        return ClosetShopDialog(userID: loggedUserID);
+                                      },
+                                    );
                                   },
                                   child: SizedBox(
                                     width: 60,
