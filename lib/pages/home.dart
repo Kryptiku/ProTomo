@@ -150,8 +150,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   void rewardTasks() {
 
     db.rewardTaskDB(loggedUserID, taskReward);
-    _showCoinAnimation();
-    // Trigger the animation
+    _showCoinAnimation(); //Animation Trigger
   }
 
   @override
