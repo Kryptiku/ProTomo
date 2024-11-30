@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:protomo/dbtest.dart';
 import '../pet_state.dart';
 
+
 final db = FirestoreTest();
 final pet = PetState();
 String loggedUserID = 'user1';
@@ -317,7 +318,7 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
                         onPressed: () {
                           Navigator.pop(context); // Close the dialog
                           db.useItemDB(userID, itemID); // Use the item (decrease quantity)
-                          addHealthToPet(replenish);
+                          pet.feed(replenish);
                         },
                         child: Text('Confirm'),
                       ),
@@ -359,9 +360,7 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
   }
 
   void addHealthToPet(int replenish) {
-    setState(() {
-      pet.feed(replenish);
-    });
+    pet.feed(replenish);
     print('Added $replenish health to pet!');
     print('Current pet health: ${pet.health}');
     // Implement health addition logic
