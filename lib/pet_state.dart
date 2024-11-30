@@ -9,7 +9,7 @@ class PetState extends ChangeNotifier {
   int _health = MAX_HEALTH;
   int _tankLevel = 0;
   late Timer _timer;
-  Duration updateDuration = Duration(seconds: 5); // Adjustable duration
+  Duration updateDuration = Duration(minutes: 1); // Adjustable duration
 
   PetState() {
     _health = MAX_HEALTH;

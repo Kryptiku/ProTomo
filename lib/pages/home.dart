@@ -26,11 +26,11 @@ class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Home> createState() => HomeState();
 }
 
-class _HomeState extends State<Home> with TickerProviderStateMixin {
-  late PetState pet;
+class HomeState extends State<Home> with TickerProviderStateMixin {
+  final pet = PetState();
   late Future<List<String>> _tasksNamesFuture;
   final db = FirestoreTest();
 
@@ -72,7 +72,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    pet = PetState();
     // Initialize the stream to get tasks from Firestore
     _taskStream = _getTasksFromFirestore();
   }
@@ -126,10 +125,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }// void
 
 
-  void _feedPet() {
-    setState(() {
-      pet.feed(50);
-    });
+  void feedPet(int replenish) {
+      pet.feed(replenish);
+      print("feedPet function called, $replenish");
   }
 
   void _cleanTank() {
@@ -242,7 +240,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                   onTap: () {
                                     print('clean');
                                     pet.cleanTank();
-                                   pet.feed(50);
                                   },
                                   child: SizedBox(
                                     width: 60.0,
