@@ -320,6 +320,7 @@ class _TimerKnobState extends State<TimerKnob> {
           isCountingDown = false; // Stop countdown when time runs out
           buttonState = 'start.png';
           print('Timer done, you earned $coinsAwarded coins');
+          stopScreenPinning();
         }
       });
     });
