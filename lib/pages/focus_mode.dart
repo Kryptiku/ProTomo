@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:protomo/animations.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const TimerKnob());
@@ -28,6 +29,25 @@ class TimerKnob extends StatefulWidget {
 }
 
 class _TimerKnobState extends State<TimerKnob> {
+  //Screen Pinning
+  static const platform = MethodChannel('com.example.your_app/screen_pin');
+
+  Future<void> startScreenPinning() async {
+    try {
+      await platform.invokeMethod('startScreenPinning');
+    } on PlatformException catch (e) {
+      print("Failed to start screen pinning: '${e.message}'.");
+    }
+  }
+
+  Future<void> stopScreenPinning() async {
+    try {
+      await platform.invokeMethod('stopScreenPinning');
+    } on PlatformException catch (e) {
+      print("Failed to stop screen pinning: '${e.message}'.");
+    }
+  }
+
   double angle = -pi / 2; // Start angle at the top for 0 minutes
   int timerValue = 0; // Timer value in minutes
   int countdownSeconds = 0; // Total countdown seconds
@@ -267,6 +287,24 @@ class _TimerKnobState extends State<TimerKnob> {
   }
 
   void startTimer() {
+    if (timerValue == 0) {
+      // Show snackbar when trying to start with zero time
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Please set the timer value before starting!",
+            style: TextStyle(fontSize: 16),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+          margin: const EdgeInsets.all(10),
+        ),
+      );
+      return;
+    }
+
+    startScreenPinning();
     setState(() {
       buttonState = 'stop.png';
       countdownSeconds = timerValue * 60; // Convert to seconds
@@ -286,6 +324,7 @@ class _TimerKnobState extends State<TimerKnob> {
       });
     });
   }
+
 
   void stopTimer() {
     showDialog(
@@ -361,6 +400,7 @@ class _TimerKnobState extends State<TimerKnob> {
                         ),
                       ),
                       onPressed: () {
+                        timerStopped();
                         Navigator.of(context).pop();
                         // Add "Yes" functionality here
                       },
@@ -380,6 +420,18 @@ class _TimerKnobState extends State<TimerKnob> {
         );
       },
     );
+  }
+
+void timerStopped() {
+    stopScreenPinning();
+    setState(() {
+      isCountingDown = false;
+      buttonState = 'start.png';
+      countdownTimer?.cancel();
+      timerValue = 0;
+      angle = -pi / 2;
+    });
+
   }
 
 
