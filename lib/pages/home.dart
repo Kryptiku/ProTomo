@@ -29,7 +29,8 @@ class Home extends StatefulWidget {
   State<Home> createState() => HomeState();
 }
 
-class HomeState extends State<Home> with TickerProviderStateMixin {
+class HomeState extends State<Home>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   final pet = PetState();
   late Future<List<String>> _tasksNamesFuture;
   final db = FirestoreTest();
@@ -40,7 +41,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   void _showCoinAnimation() {
     final random = math.Random();
-    final startX = MediaQuery.of(context).size.width / 2 + random.nextDouble() * 40 - 20;
+    final startX =
+        MediaQuery.of(context).size.width / 2 + random.nextDouble() * 40 - 20;
     final endX = startX + random.nextDouble() * 80 - 40;
 
     final controller = AnimationController(
@@ -72,12 +74,17 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); // Add observer for app lifecycle
+    FlameAudio.bgm.initialize();
+    FlameAudio.bgm.play('sample_bg_music.mp3', volume: AudioService.bgmVolume);
     // Initialize the stream to get tasks from Firestore
     _taskStream = _getTasksFromFirestore();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Remove observer on dispose
+    FlameAudio.bgm.stop(); // Stop BGM when the widget is disposed
     pet.dispose();
     super.dispose();
 
@@ -85,6 +92,19 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       animation.controller.dispose();
     }
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.paused) {
+      // if the app is in the background
+      FlameAudio.bgm.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      // resume when its on the foreground
+      FlameAudio.bgm.resume();
+    }
   }
 
   List<String> tasks = [];
@@ -114,20 +134,18 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     final activeTasksToday = await db.getActiveTasksTodayDB(loggedUserID);
 
     if (completedTasksToday < 5) {
-        rewardTasks();
-    }
-    else if (completedTasksToday == 5  ){
+      rewardTasks();
+    } else if (completedTasksToday == 5) {
       _showLimitReachedDialog();
     } // else if
-    else{
+    else {
       _showSnackBar("No more rewards for today.");
     }
-  }// void
-
+  } // void
 
   void feedPet(int replenish) {
-      pet.feed(replenish);
-      print("feedPet function called, $replenish");
+    pet.feed(replenish);
+    print("feedPet function called, $replenish");
   }
 
   void _cleanTank() {
@@ -146,7 +164,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   void rewardTasks() {
-
     db.rewardTaskDB(loggedUserID, taskReward);
     _showCoinAnimation(); //Animation Trigger
   }
@@ -161,7 +178,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
         tasks = snapshot.data ?? [];
 
         return Scaffold(
-
           body: SafeArea(
             top: false,
             bottom: false,
@@ -189,16 +205,14 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                         rotationDuration: 50,
                         width: 200,
                         height: 200,
-                      ),),
+                      ),
+                    ),
                     DirtinessOverlay(
                       dirtinessLevel: pet.tankLevel,
                       maxDirtinessLevel: PetState.MAX_TANK_LEVEL,
                     ),
                     Positioned(
-                      top: MediaQuery
-                          .of(context)
-                          .padding
-                          .top + 20,
+                      top: MediaQuery.of(context).padding.top + 20,
                       left: 10,
                       child: Container(
                         padding: EdgeInsets.all(8),
@@ -212,14 +226,16 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                           children: [
                             Text(
                               'Health: ${pet.health}',
-                              style: TextStyle(color: Colors.white,
+                              style: TextStyle(
+                                  color: Colors.white,
                                   fontFamily: 'VT323',
                                   fontSize: 20),
                             ),
                             SizedBox(height: 4),
                             Text(
                               'Tank Level: ${pet.tankLevel}',
-                              style: TextStyle(color: Colors.white,
+                              style: TextStyle(
+                                  color: Colors.white,
                                   fontFamily: 'VT323',
                                   fontSize: 20),
                             ),
@@ -235,7 +251,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-
                                 GestureDetector(
                                   onTap: () {
                                     print('clean');
@@ -267,11 +282,10 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => HistoryPage(),
-                                        )
-                                    );
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => HistoryPage(),
+                                    ));
                                   },
                                   child: SizedBox(
                                     width: 70,
@@ -326,8 +340,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                                     //     ConnectionState.waiting) {
                                     //   return CircularProgressIndicator(); // Show loading indicator while waiting for the result
                                     // }
-                                    return Text('${snapshot
-                                        .data}'); // Display the coins when data is available
+                                    return Text(
+                                        '${snapshot.data}'); // Display the coins when data is available
                                   },
                                 ),
                                 Image.asset(
@@ -347,10 +361,12 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                                 GestureDetector(
                                   onTap: () {
                                     showDialog(
-                                      context: context, // Ensure this is the correct context
+                                      context:
+                                          context, // Ensure this is the correct context
                                       barrierDismissible: true,
                                       builder: (BuildContext context) {
-                                        return ClosetShopDialog(userID: loggedUserID);
+                                        return ClosetShopDialog(
+                                            userID: loggedUserID);
                                       },
                                     );
                                   },
@@ -393,12 +409,13 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                                 // if (snapshot.connectionState == ConnectionState.waiting) {
                                 //   return CircularProgressIndicator();
                                 // }
-                                  if (snapshot.hasError) {
+                                if (snapshot.hasError) {
                                   return Text("Error: ${snapshot.error}");
                                 } else if (snapshot.hasData) {
                                   int tasksLimit = snapshot.data ?? 0;
                                   return Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "Tasks $tasksLimit/5",
@@ -409,7 +426,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                                         ),
                                       ),
                                       IconButton(
-                                        icon: Icon(Icons.add, color: Colors.white),
+                                        icon: Icon(Icons.add,
+                                            color: Colors.white),
                                         onPressed: _showAddTaskPopup,
                                       ),
                                     ],
@@ -436,40 +454,50 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    ..._animations.map((animation) => AnimatedBuilder(
-                        animation: animation.controller,
-                        builder: (context, child) {
-                          final value = animation.controller.value;
-                          final yOffset = 100 * value;
-                          final xOffset = (animation.endX - animation.startX) * math.sin(value * math.pi);
-                          return Positioned(
-                            left: animation.startX + xOffset,
-                            bottom: MediaQuery.of(context).size.height / 2 + 25 + yOffset,
-                            child: Opacity(
-                              opacity: 1 - value,
-                                child: Column(
-                                  children: [
-                                    Image.asset(
-                                      'assets/buttons/coin.png',
-                                      width: 50,
-                                      height: 50,
+                    ..._animations
+                        .map((animation) => AnimatedBuilder(
+                              animation: animation.controller,
+                              builder: (context, child) {
+                                final value = animation.controller.value;
+                                final yOffset = 100 * value;
+                                final xOffset =
+                                    (animation.endX - animation.startX) *
+                                        math.sin(value * math.pi);
+                                return Positioned(
+                                  left: animation.startX + xOffset,
+                                  bottom:
+                                      MediaQuery.of(context).size.height / 2 +
+                                          25 +
+                                          yOffset,
+                                  child: Opacity(
+                                    opacity: 1 - value,
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          'assets/buttons/coin.png',
+                                          width: 50,
+                                          height: 50,
+                                        ),
+                                        Text(
+                                          '+$_coinValue',
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.orange),
+                                        ),
+                                      ],
                                     ),
-                                    Text('+$_coinValue', style: const TextStyle(fontSize: 20, color: Colors.orange),),
-                                  ],
-                                ),
-                            ),
-                          );
-                        },
-                    )).toList(),
+                                  ),
+                                );
+                              },
+                            ))
+                        .toList(),
                   ],
                 ),
               ),
             ),
           ),
-
         );
       },
-
     );
   }
 
@@ -516,13 +544,15 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                   controller: taskController,
                   decoration: InputDecoration(
                     hintText: "Enter task title",
-                    hintStyle: TextStyle(color: Colors.white60), // Light hint text
+                    hintStyle:
+                        TextStyle(color: Colors.white60), // Light hint text
                     border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 1),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  style: TextStyle(color: Colors.white), // Text color inside the field
+                  style: TextStyle(
+                      color: Colors.white), // Text color inside the field
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -543,8 +573,10 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                     TextButton(
                       onPressed: () {
                         if (taskController.text.isNotEmpty) {
-                          _addTask(taskController.text); // Add task functionality
-                          Navigator.of(context).pop(); // Close dialog after adding task
+                          _addTask(
+                              taskController.text); // Add task functionality
+                          Navigator.of(context)
+                              .pop(); // Close dialog after adding task
                         }
                       },
                       child: const Text(
@@ -593,14 +625,14 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       },
     );
   }
-
 }
 
 class CustomTaskTile extends StatelessWidget {
   final Task task;
   final VoidCallback onToggle;
 
-  const CustomTaskTile({Key? key, required this.task, required this.onToggle}) : super(key: key);
+  const CustomTaskTile({Key? key, required this.task, required this.onToggle})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -641,6 +673,6 @@ class CoinAnimation {
   final double startX;
   final double endX;
 
-  CoinAnimation({required this.controller, required this.startX, required this.endX});
+  CoinAnimation(
+      {required this.controller, required this.startX, required this.endX});
 }
-
