@@ -2,7 +2,7 @@ import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/audio_service.dart';
-import 'package:protomo/dbtest.dart';
+import 'package:protomo/database_functions.dart';
 import 'package:protomo/pages/closet.dart';
 import 'package:protomo/animations.dart';
 import 'package:protomo/pages/settings.dart';
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'history.dart';
 import 'dart:math' as math;
 
-final db = FirestoreTest();
+final db = FirestoreService();
 
 String loggedUserID = db.getCurrentUserId().toString();
 int taskReward = 5;
@@ -35,7 +35,6 @@ class HomeState extends State<Home>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   final pet = PetState();
   late Future<List<String>> _tasksNamesFuture;
-  final db = FirestoreTest();
 
   //Coins Animation Params
   final int _coinValue = 5; //placeholder value

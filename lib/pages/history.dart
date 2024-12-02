@@ -1,9 +1,9 @@
 // history_page.dart
 import 'package:flutter/material.dart';
-import '../dbtest.dart';
+import '../database_functions.dart';
 
 
-final db = FirestoreTest();
+final db = FirestoreService();
 String loggedUserID = db.getCurrentUserId().toString();
 
 class HistoryPage extends StatefulWidget {

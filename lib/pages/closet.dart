@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:protomo/dbtest.dart';
+import 'package:protomo/database_functions.dart';
 import 'package:protomo/pages/home.dart';
 import 'package:provider/provider.dart';
 import '../pet_state.dart';
 
 
-final db = FirestoreTest();
+final db = FirestoreService();
 final pet = PetState();
-final home = HomeState();
 String loggedUserID = db.getCurrentUserId().toString();
 
 Widget buyButton(String foodId, String assetPath) {
