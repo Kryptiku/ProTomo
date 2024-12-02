@@ -55,6 +55,7 @@ class _TimerKnobState extends State<TimerKnob> {
   Timer? countdownTimer; // Timer instance for countdown
   bool isCountingDown = false; // Flag to check if countdown is active
   String buttonState = 'start.png';
+  bool buttonVisibility = true;
 
   final int maxMinutes = 180; // Maximum timer value
   final int increment = 5; // Timer increments in minutes
@@ -246,32 +247,34 @@ class _TimerKnobState extends State<TimerKnob> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.pop(context);
-                        },
-                        child: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Image.asset(
-                            'assets/buttons/exit.png',
-                            fit: BoxFit.contain,
+                      if (buttonVisibility)
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Image.asset(
+                              'assets/buttons/exit.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          print('musica');
-                        },
-                        child: SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: Image.asset(
-                            'assets/buttons/music_enabled.png',
-                            fit: BoxFit.contain,
+                      if (!buttonVisibility)
+                        GestureDetector(
+                          onTap: (){
+                            print('musica');
+                          },
+                          child: SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: Image.asset(
+                              'assets/buttons/music_enabled.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -288,6 +291,9 @@ class _TimerKnobState extends State<TimerKnob> {
   }
 
   void startTimer() {
+    setState(() {
+      buttonVisibility = false;
+    });
     AudioService.startFocusFx();
     if (timerValue == 0) {
       // Show snackbar when trying to start with zero time
@@ -323,6 +329,7 @@ class _TimerKnobState extends State<TimerKnob> {
           buttonState = 'start.png';
           print('Timer done, you earned $coinsAwarded coins');
           stopScreenPinning();
+          buttonVisibility = true;
         }
       });
     });
@@ -436,6 +443,7 @@ void timerStopped() {
       countdownTimer?.cancel();
       timerValue = 0;
       angle = -pi / 2;
+      buttonVisibility = true;
     });
 
   }
