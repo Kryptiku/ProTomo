@@ -215,7 +215,7 @@ class FirestoreTest {
     }
   }
 
-  Future<void> rewardTaskDB(String userID, int reward) async {
+  Future<void> rewardUserDB(String userID, int reward) async {
     final userRef = db.collection('users').doc(userID);
     final DocumentSnapshot userSnapshot = await userRef.get();
 
@@ -294,6 +294,28 @@ class FirestoreTest {
     }
     else {
       await itemRef.update({'quantity': FieldValue.increment(-1)});
+    }
+  }
+
+  Future<void> addCompletedFocusToDB(String userID, int duration) async {
+    try {
+      // Fetch the number of completed tasks
+      var querySnapshot = await db.collection('users').doc(userID).collection('completedFocus').get();
+      int focusNum = querySnapshot.docs.length; //get amount of tasks
+
+      // Generate a new task number and name
+      int newFocusNum = focusNum + 1;
+      String newFocusName = newFocusNum.toString();
+
+      final data = <String, dynamic>{
+        "dateCompleted": DateTime.now(),
+        "focusDuration": duration
+      };
+
+      await db.collection('users').doc(userID).collection('completedFocus').doc(newFocusName).set(data);
+
+    } catch (e) {
+      print("Error completing task '$duration': $e");
     }
   }
 

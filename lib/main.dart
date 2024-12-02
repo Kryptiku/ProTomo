@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:protomo/pages/focus_mode.dart';
 import 'package:protomo/pages/home.dart';
-import 'package:protomo/pages/loading.dart';
 import 'package:protomo/pages/login.dart';
 import 'package:protomo/pages/register.dart';
 import 'package:protomo/pages/start.dart';
@@ -25,7 +24,6 @@ void main() async {
       child: MaterialApp(
         initialRoute: '/start',
         routes: {
-          '/': (context) => Loading(),
           '/home': (context) => Home(),
           '/focus': (context) => TimerKnob(),
           '/login': (context) => LoginPage(),
