@@ -8,7 +8,7 @@ import '../pet_state.dart';
 final db = FirestoreTest();
 final pet = PetState();
 final home = HomeState();
-String loggedUserID = 'user1';
+String loggedUserID = db.getCurrentUserId().toString();
 
 Widget buyButton(String foodId, String assetPath) {
   return FutureBuilder<String>(

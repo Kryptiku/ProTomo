@@ -1,35 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class RegisterScreen extends StatefulWidget {
-  @override
-  _RegisterScreenState createState() => _RegisterScreenState();
-}
+class RegisterScreen extends StatelessWidget {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  // Text Editing Controllers
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-
-  // Form Key for validation
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    super.dispose();
-  }
-
-  // Method to handle form submission
-  void _register() {
+  void _register(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      // Perform registration logic here (e.g., API call)
-      print("Registration Success");
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+        // Add user to Firestore
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'coins': 100,
+          'creationTime': FieldValue.serverTimestamp(),
+        });
+        Navigator.pushReplacementNamed(context, '/login');
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Registration Failed"),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
@@ -46,30 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             children: [
               TextFormField(
-                controller: _usernameController,
-                decoration: InputDecoration(labelText: "Username"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter a username";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(labelText: "Password"),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter a password";
-                  } else if (value.length < 6) {
-                    return "Password should be at least 6 characters";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _emailController,
+                controller: emailController,
                 decoration: InputDecoration(labelText: "Email Address"),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -81,24 +69,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
               ),
               TextFormField(
-                controller: _phoneController,
-                decoration: InputDecoration(
-                    labelText: "Phone Number", prefixText: '+63'),
-                keyboardType: TextInputType.phone,
+                controller: passwordController,
+                decoration: InputDecoration(labelText: "Password"),
+                obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter a phone number";
+                    return "Please enter a password";
+                  } else if (value.length < 6) {
+                    return "Password should be at least 6 characters";
                   }
                   return null;
                 },
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(10)
-                ],
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _register,
+                onPressed: () => _register(context),
                 child: Text("Register"),
               ),
             ],

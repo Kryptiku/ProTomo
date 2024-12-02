@@ -12,7 +12,9 @@ import 'package:provider/provider.dart';
 import 'history.dart';
 import 'dart:math' as math;
 
-String loggedUserID = 'user1';
+final db = FirestoreTest();
+
+String loggedUserID = db.getCurrentUserId().toString();
 int taskReward = 5;
 
 void main() async {

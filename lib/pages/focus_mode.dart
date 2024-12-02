@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:protomo/pages/audio_service.dart';
 import 'package:protomo/dbtest.dart';
 
-String loggedUserID = 'user1';
+String loggedUserID = db.getCurrentUserId().toString();
 final db = FirestoreTest();
 
 void main() {
@@ -64,7 +64,7 @@ class _TimerKnobState extends State<TimerKnob> {
   final int maxMinutes = 180; // Maximum timer value
   final int increment = 5; // Timer increments in minutes
 
-  int coinsAwarded = 1;
+  int coinsAwarded = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -293,7 +293,7 @@ class _TimerKnobState extends State<TimerKnob> {
 
 
   int calculateCoins(int minutes) {
-    return minutes ~/ 10;
+    return (minutes ~/5) * 3 ;
   }
 
   void startTimer() {
@@ -325,6 +325,8 @@ class _TimerKnobState extends State<TimerKnob> {
       isCountingDown = true; // Start the countdown
     });
 
+    int duration = countdownSeconds;
+
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (countdownSeconds > 0) {
@@ -334,6 +336,7 @@ class _TimerKnobState extends State<TimerKnob> {
           isCountingDown = false; // Stop countdown when time runs out
           buttonState = 'start.png';
           db.rewardUserDB(loggedUserID, coinsAwarded);
+          db.addCompletedFocusToDB(loggedUserID, duration);
           stopScreenPinning();
           buttonVisibility = true;
         }

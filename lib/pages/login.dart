@@ -1,59 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:protomo/pages/home.dart';
 import 'package:protomo/pages/register.dart';
 
 class LoginPage extends StatelessWidget {
-  final TextEditingController usernameText = TextEditingController();
-  final TextEditingController passwordText = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  void loginButton(BuildContext context) {
-    String username = usernameText.text;
-    String password = passwordText.text;
-
-    // Check if username and password are correct
-    if (username == 'admin' && password == '12345') {
-      // login is successful, go to main.dart MyCVPage
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Home()),
+  void loginButton(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
       );
-    } else if (username == '' || password == '') {
-      // if the username and/or password is empty go here
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Credentials Invalid!"),
-            content: const Text('Username or Passwor   d is empty'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // close the dialog
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      // if wrong password or username, show an error dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Credentials Invalid!"),
-            content: const Text('Invalid username or password entered.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          );
-        },
+        builder: (context) => AlertDialog(
+          title: Text("Login Failed"),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
       );
     }
   }
@@ -73,9 +47,9 @@ class LoginPage extends StatelessWidget {
           children: [
             // username textfield
             TextField(
-              controller: usernameText,
+              controller: emailController,
               decoration: InputDecoration(
-                labelText: 'Username',
+                labelText: 'Email',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -85,7 +59,7 @@ class LoginPage extends StatelessWidget {
 
             // password textfield
             TextField(
-              controller: passwordText,
+              controller: passwordController,
               obscureText: true, // mask the password
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -104,7 +78,7 @@ class LoginPage extends StatelessWidget {
                 backgroundColor: Colors.blue, // button bg color
                 foregroundColor: Colors.white, // button text color
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -149,7 +123,7 @@ class LoginPage extends StatelessWidget {
                 backgroundColor: Colors.blue, // button bg color
                 foregroundColor: Colors.white, // button text color
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
