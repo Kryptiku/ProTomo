@@ -165,7 +165,7 @@ class HomeState extends State<Home>
   }
 
   void rewardTasks() {
-    db.rewardTaskDB(loggedUserID, taskReward);
+    db.rewardUserDB(loggedUserID, taskReward);
     _showCoinAnimation(); //Animation Trigger
   }
 

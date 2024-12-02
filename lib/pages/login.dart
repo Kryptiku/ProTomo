@@ -24,7 +24,7 @@ class LoginPage extends StatelessWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text("Credentials Invalid!"),
-            content: const Text('Username or Password is empty'),
+            content: const Text('Username or Passwor   d is empty'),
             actions: [
               TextButton(
                 onPressed: () {

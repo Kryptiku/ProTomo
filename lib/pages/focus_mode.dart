@@ -5,6 +5,10 @@ import 'dart:math';
 import 'package:protomo/animations.dart';
 import 'package:flutter/services.dart';
 import 'package:protomo/pages/audio_service.dart';
+import 'package:protomo/dbtest.dart';
+
+String loggedUserID = 'user1';
+final db = FirestoreTest();
 
 void main() {
   runApp(const TimerKnob());
@@ -283,6 +287,8 @@ class _TimerKnobState extends State<TimerKnob> {
     );
   }
 
+
+
   int calculateCoins(int minutes) {
     return minutes ~/ 10;
   }
@@ -321,7 +327,7 @@ class _TimerKnobState extends State<TimerKnob> {
           countdownTimer?.cancel();
           isCountingDown = false; // Stop countdown when time runs out
           buttonState = 'start.png';
-          print('Timer done, you earned $coinsAwarded coins');
+          db.rewardUserDB(loggedUserID, coinsAwarded);
           stopScreenPinning();
         }
       });
