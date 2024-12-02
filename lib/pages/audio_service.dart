@@ -15,9 +15,40 @@ class AudioService {
   }
 
   // Play sound effect
-  static void playSoundFx() {
+  static void buttonPressFx() {
     FlameAudio.play(
-      'sample_sound_fx.mp3',
+      'button_press.wav',
+      volume: sfxVolume * masterVolume,
+    );
+  }
+  static void coinFx() {
+    FlameAudio.play(
+      'coin.wav',
+      volume: sfxVolume * masterVolume,
+    );
+  }
+  static void popupNoFx() {
+    FlameAudio.play(
+      'popup_no.wav',
+      volume: sfxVolume * masterVolume,
+    );
+  }
+  static void popupYesFx() {
+    FlameAudio.play(
+      'popup_yes.wav',
+      volume: sfxVolume * masterVolume,
+    );
+  }
+  static void startFocusFx() {
+    FlameAudio.play(
+      'start_focus.wav',
+      volume: sfxVolume * masterVolume,
+    );
+  }
+
+  static void stopTimeFx() {
+    FlameAudio.play(
+      'stop_time.wav',
       volume: sfxVolume * masterVolume,
     );
   }

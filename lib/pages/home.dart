@@ -18,7 +18,7 @@ int taskReward = 5;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlameAudio.audioCache
-      .loadAll(['sample_bg_music.mp3', 'sample_sound_fx.mp3']);
+      .loadAll(['sample_bg_music.mp3', 'button_press.wav', 'coin.wav', 'popup_no.wav', 'popup_yes.wav', 'start_focus.wav', 'stop_time.wav']);
   runApp(const Home());
 }
 
@@ -40,6 +40,7 @@ class HomeState extends State<Home>
   final List<CoinAnimation> _animations = [];
 
   void _showCoinAnimation() {
+    AudioService.coinFx();
     final random = math.Random();
     final startX =
         MediaQuery.of(context).size.width / 2 + random.nextDouble() * 40 - 20;
@@ -183,7 +184,7 @@ class HomeState extends State<Home>
             bottom: false,
             child: GestureDetector(
               onTap: () {
-                AudioService.playSoundFx();
+                AudioService.buttonPressFx();
               },
               child: Container(
                 child: Stack(
@@ -267,7 +268,7 @@ class HomeState extends State<Home>
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    AudioService.playSoundFx();
+                                    AudioService.startFocusFx();
                                     print('Start Timer');
                                     Navigator.pushNamed(context, '/focus');
                                   },
@@ -282,6 +283,7 @@ class HomeState extends State<Home>
                                 ),
                                 GestureDetector(
                                   onTap: () {
+                                    AudioService.buttonPressFx();
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                       builder: (context) => HistoryPage(),
@@ -309,6 +311,7 @@ class HomeState extends State<Home>
                                 GestureDetector(
                                   onTap: () {
                                     showSettings(context);
+                                    AudioService.buttonPressFx();
                                   },
                                   child: SizedBox(
                                     width: 60,
@@ -360,6 +363,7 @@ class HomeState extends State<Home>
                                 ),
                                 GestureDetector(
                                   onTap: () {
+                                    AudioService.buttonPressFx();
                                     showDialog(
                                       context:
                                           context, // Ensure this is the correct context
@@ -561,6 +565,7 @@ class HomeState extends State<Home>
                     TextButton(
                       onPressed: () {
                         Navigator.of(context).pop(); // Close the dialog
+                        AudioService.popupNoFx();
                       },
                       child: const Text(
                         "Cancel",
@@ -572,6 +577,7 @@ class HomeState extends State<Home>
                     ),
                     TextButton(
                       onPressed: () {
+                        AudioService.popupYesFx();
                         if (taskController.text.isNotEmpty) {
                           _addTask(
                               taskController.text); // Add task functionality

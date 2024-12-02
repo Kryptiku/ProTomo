@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:protomo/animations.dart';
 import 'package:flutter/services.dart';
+import 'package:protomo/pages/audio_service.dart';
 
 void main() {
   runApp(const TimerKnob());
@@ -287,6 +288,7 @@ class _TimerKnobState extends State<TimerKnob> {
   }
 
   void startTimer() {
+    AudioService.startFocusFx();
     if (timerValue == 0) {
       // Show snackbar when trying to start with zero time
       ScaffoldMessenger.of(context).showSnackBar(
@@ -328,6 +330,7 @@ class _TimerKnobState extends State<TimerKnob> {
 
 
   void stopTimer() {
+    AudioService.stopTimeFx();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -382,6 +385,7 @@ class _TimerKnobState extends State<TimerKnob> {
                         ),
                       ),
                       onPressed: () {
+                        AudioService.popupNoFx();
                         Navigator.of(context).pop(); // Close dialog
                       },
                       child: const Text(
@@ -401,6 +405,7 @@ class _TimerKnobState extends State<TimerKnob> {
                         ),
                       ),
                       onPressed: () {
+                        AudioService.popupYesFx();
                         timerStopped();
                         Navigator.of(context).pop();
                         // Add "Yes" functionality here

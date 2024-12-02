@@ -145,6 +145,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Close dialog
+                  AudioService.popupNoFx();
                 },
                 child: const Text(
                   "Close",
