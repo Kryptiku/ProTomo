@@ -262,8 +262,8 @@ class HomeState extends State<Home>
                                     width: 60.0,
                                     height: 60.0,
                                     child: Image.asset(
-                                      'assets/buttons/calendar.png',
-                                      fit: BoxFit.contain,
+                                      'assets/buttons/tankCleaner.png',
+                                      fit: BoxFit.fill,
                                     ),
                                   ),
                                 ),
@@ -277,7 +277,7 @@ class HomeState extends State<Home>
                                     width: 60,
                                     height: 60,
                                     child: Image.asset(
-                                      'assets/buttons/start.png',
+                                      'assets/buttons/focusbtn.png',
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -550,7 +550,8 @@ class HomeState extends State<Home>
                 const Text(
                   "Enter task title:",
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 24,
+                    fontFamily: 'VT323',
                     color: Colors.white,
                   ),
                 ),
@@ -567,7 +568,10 @@ class HomeState extends State<Home>
                     ),
                   ),
                   style: TextStyle(
-                      color: Colors.white), // Text color inside the field
+                      color: Colors.white,
+                      fontFamily: 'VT323',
+                      fontSize: 18
+                  ), // Text color inside the field
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -582,7 +586,8 @@ class HomeState extends State<Home>
                         "Cancel",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontFamily: 'VT323',
+                          fontSize: 28,
                         ),
                       ),
                     ),
@@ -600,7 +605,8 @@ class HomeState extends State<Home>
                         "Add",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontFamily: 'VT323',
+                          fontSize: 28,
                         ),
                       ),
                     ),

@@ -115,17 +115,55 @@ Widget buyButton(String foodId, String assetPath) {
             showDialog(
               context: context,
               builder: (context) {
-                return AlertDialog(
-                  title: Text('Insufficient Coins'),
-                  content: Text(
-                    'You need $itemCost coins to purchase this item, but you only have $userCoins coins.',
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text('OK'),
+                  backgroundColor: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(12.0),
+                      border: Border.all(color: Colors.white, width: 2),
                     ),
-                  ],
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Insufficient Coins',
+                          style: const TextStyle(
+                            fontFamily: 'VT323',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'You need $itemCost coins to purchase this item, but you only have $userCoins coins.',
+                          style: const TextStyle(
+                            fontFamily: 'VT323',
+                            fontSize: 26,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            'OK',
+                            style: TextStyle(
+                              fontFamily: 'VT323',
+                              color: Colors.white,
+                              fontSize: 26,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             );
