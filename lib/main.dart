@@ -1,39 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Add provider import
-import 'package:protomo/pages/history.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:protomo/pages/focus_mode.dart';
 import 'package:protomo/pages/home.dart';
-import 'package:protomo/pages/loading.dart';
 import 'package:protomo/pages/login.dart';
 import 'package:protomo/pages/register.dart';
 import 'package:protomo/pages/start.dart';
-import 'pet_state.dart'; // Adjust the path to where your PetState class is located
+import 'pet_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => PetState()), // Provide PetState
+        ChangeNotifierProvider(create: (context) => PetState()),
       ],
       child: MaterialApp(
-        initialRoute: '/start',
+        home: AuthCheck(),
         routes: {
-          '/': (context) => Loading(),
           '/home': (context) => Home(),
           '/focus': (context) => TimerKnob(),
           '/login': (context) => LoginPage(),
           '/register': (context) => RegisterScreen(),
-          '/history': (context) => HistoryPage(),
           '/start': (context) => StartPage(),
         },
       ),
     ),
   );
+}
+
+class AuthCheck extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasData) {
+          return Home();
+        } else {
+          return LoginPage();
+        }
+      },
+    );
+  }
 }

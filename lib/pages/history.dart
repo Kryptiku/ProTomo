@@ -1,8 +1,10 @@
 // history_page.dart
 import 'package:flutter/material.dart';
-import '../dbtest.dart';
+import '../database_functions.dart';
 
-String loggedUserID = 'user1';
+
+final db = FirestoreService();
+String loggedUserID = db.getCurrentUserId().toString();
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({Key? key}) : super(key: key);
@@ -12,7 +14,6 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  final db = FirestoreTest();
   late Future<List<String>> _completedTaskNamesFuture;
 
   @override

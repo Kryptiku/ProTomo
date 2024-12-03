@@ -4,22 +4,15 @@ import 'dart:async';
 import 'dart:math';
 import 'package:protomo/animations.dart';
 import 'package:flutter/services.dart';
+import 'package:protomo/pages/audio_service.dart';
+import 'package:protomo/database_functions.dart';
+
+String loggedUserID = db.getCurrentUserId().toString();
+final db = FirestoreService();
 
 void main() {
   runApp(const TimerKnob());
 }
-
-// class FocusMode extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(title: Text("Timer Knob")),
-//         body: Center(child: TimerKnob()),
-//       ),
-//     );
-//   }
-// }
 
 class TimerKnob extends StatefulWidget {
   const TimerKnob({super.key});
@@ -54,11 +47,12 @@ class _TimerKnobState extends State<TimerKnob> {
   Timer? countdownTimer; // Timer instance for countdown
   bool isCountingDown = false; // Flag to check if countdown is active
   String buttonState = 'start.png';
+  bool buttonVisibility = true;
 
   final int maxMinutes = 180; // Maximum timer value
   final int increment = 5; // Timer increments in minutes
 
-  int coinsAwarded = 1;
+  int coinsAwarded = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -245,32 +239,34 @@ class _TimerKnobState extends State<TimerKnob> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.pop(context);
-                        },
-                        child: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Image.asset(
-                            'assets/buttons/exit.png',
-                            fit: BoxFit.contain,
+                      if (buttonVisibility)
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Image.asset(
+                              'assets/buttons/exit.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          print('musica');
-                        },
-                        child: SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: Image.asset(
-                            'assets/buttons/music_enabled.png',
-                            fit: BoxFit.contain,
+                      if (!buttonVisibility)
+                        GestureDetector(
+                          onTap: (){
+                            print('musica');
+                          },
+                          child: SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: Image.asset(
+                              'assets/buttons/music_enabled.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -282,11 +278,17 @@ class _TimerKnobState extends State<TimerKnob> {
     );
   }
 
+
+
   int calculateCoins(int minutes) {
-    return minutes ~/ 10;
+    return (minutes ~/5) * 3 ;
   }
 
   void startTimer() {
+    setState(() {
+      buttonVisibility = false;
+    });
+    AudioService.startFocusFx();
     if (timerValue == 0) {
       // Show snackbar when trying to start with zero time
       ScaffoldMessenger.of(context).showSnackBar(
@@ -311,6 +313,8 @@ class _TimerKnobState extends State<TimerKnob> {
       isCountingDown = true; // Start the countdown
     });
 
+    int duration = countdownSeconds;
+
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (countdownSeconds > 0) {
@@ -319,8 +323,10 @@ class _TimerKnobState extends State<TimerKnob> {
           countdownTimer?.cancel();
           isCountingDown = false; // Stop countdown when time runs out
           buttonState = 'start.png';
-          print('Timer done, you earned $coinsAwarded coins');
+          db.rewardUserDB(loggedUserID, coinsAwarded);
+          db.addCompletedFocusToDB(loggedUserID, duration);
           stopScreenPinning();
+          buttonVisibility = true;
         }
       });
     });
@@ -328,6 +334,7 @@ class _TimerKnobState extends State<TimerKnob> {
 
 
   void stopTimer() {
+    AudioService.stopTimeFx();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -382,6 +389,7 @@ class _TimerKnobState extends State<TimerKnob> {
                         ),
                       ),
                       onPressed: () {
+                        AudioService.popupNoFx();
                         Navigator.of(context).pop(); // Close dialog
                       },
                       child: const Text(
@@ -401,6 +409,7 @@ class _TimerKnobState extends State<TimerKnob> {
                         ),
                       ),
                       onPressed: () {
+                        AudioService.popupYesFx();
                         timerStopped();
                         Navigator.of(context).pop();
                         // Add "Yes" functionality here
@@ -431,6 +440,7 @@ void timerStopped() {
       countdownTimer?.cancel();
       timerValue = 0;
       angle = -pi / 2;
+      buttonVisibility = true;
     });
 
   }
