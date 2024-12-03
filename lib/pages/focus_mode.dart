@@ -21,7 +21,7 @@ class TimerKnob extends StatefulWidget {
   State<TimerKnob> createState() => _TimerKnobState();
 }
 
-class _TimerKnobState extends State<TimerKnob> {
+class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
   //Screen Pinning
   static const platform = MethodChannel('com.example.your_app/screen_pin');
 
@@ -52,7 +52,38 @@ class _TimerKnobState extends State<TimerKnob> {
   final int maxMinutes = 180; // Maximum timer value
   final int increment = 5; // Timer increments in minutes
 
+  // Coin Params
   int coinsAwarded = 0;
+  final List<CoinAnimation> _animations = [];
+
+  void _showCoinAnimation() {
+    AudioService.coinFx();
+    final random = Random();
+    final startX = MediaQuery.of(context).size.width / 2 + random.nextDouble() * 40 - 20;
+    final endX = startX + random.nextDouble() * 80 - 40;
+
+    final controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
+    final animation = CoinAnimation(
+      controller: controller,
+      startX: startX,
+      endX: endX,
+    );
+
+    setState(() {
+      _animations.add(animation);
+    });
+
+    controller.forward().then((_) {
+      setState(() {
+        _animations.remove(animation);
+      });
+      controller.dispose();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -264,6 +295,45 @@ class _TimerKnobState extends State<TimerKnob> {
                 ),
               ],
             ),
+            ..._animations
+                .map((animation) => AnimatedBuilder(
+              animation: animation.controller,
+              builder: (context, child) {
+                final value = animation.controller.value;
+                final yOffset = 100 * value;
+                final xOffset =
+                    (animation.endX - animation.startX) *
+                        sin(value * pi);
+                return Positioned(
+                  left: animation.startX + xOffset,
+                  bottom:
+                  MediaQuery.of(context).size.height / 2 +
+                      25 +
+                      yOffset,
+                  child: Opacity(
+                    opacity: 1 - value,
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/buttons/coin.png',
+                          width: 50,
+                          height: 50,
+                        ),
+                        Text(
+                          '+$coinsAwarded',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.orange,
+                            fontFamily: 'VT323',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ))
+                .toList(),
           ],
         ),
       ),
@@ -300,7 +370,7 @@ class _TimerKnobState extends State<TimerKnob> {
 
     startScreenPinning();
     setState(() {
-      buttonState = 'focusStop.png';
+      buttonState = 'stop.png';
       countdownSeconds = timerValue * 60; // Convert to seconds
       isCountingDown = true; // Start the countdown
     });
@@ -314,9 +384,13 @@ class _TimerKnobState extends State<TimerKnob> {
         } else {
           countdownTimer?.cancel();
           isCountingDown = false; // Stop countdown when time runs out
-          buttonState = 'focusStart.png';
+          buttonState = 'start.png';
           db.rewardUserDB(loggedUserID, coinsAwarded);
           db.addCompletedFocusToDB(loggedUserID, duration);
+          stopScreenPinning();
+          buttonVisibility = true;
+          _showCoinAnimation();
+          AudioService.coinFx();
         }
       });
     });
@@ -446,4 +520,13 @@ void timerStopped() {
     countdownTimer?.cancel();
     super.dispose();
   }
+}
+
+class CoinAnimation {
+  final AnimationController controller;
+  final double startX;
+  final double endX;
+
+  CoinAnimation(
+      {required this.controller, required this.startX, required this.endX});
 }
