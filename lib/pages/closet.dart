@@ -39,24 +39,75 @@ Widget buyButton(String foodId, String assetPath) {
             showDialog(
               context: context,
               builder: (context) {
-                return AlertDialog(
-                  title: Text('Confirm Purchase'),
-                  content: Text(
-                    'Do you want to purchase this item for $itemCost coins?',
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context), // Cancel
-                      child: Text('Cancel'),
+                  backgroundColor: Colors.transparent,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(12.0),
+                      border: Border.all(color: Colors.white, width: 2),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close the dialog
-                        db.buyItem(loggedUserID, foodId); // Purchase the item\
-                      },
-                      child: Text('Confirm'),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Confirm Purchase',
+                          style: const TextStyle(
+                            fontFamily: 'VT323',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Do you want to purchase this item for $itemCost coins?',
+                          style: const TextStyle(
+                            fontFamily: 'VT323',
+                            fontSize: 26,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context), // Cancel
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  fontFamily: 'VT323',
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context); // Close the dialog
+                                db.buyItem(loggedUserID, foodId); // Purchase the item
+                              },
+                              child: const Text(
+                                'Confirm',
+                                style: TextStyle(
+                                  fontFamily: 'VT323',
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 );
               },
             );
@@ -89,7 +140,7 @@ Widget buyButton(String foodId, String assetPath) {
               width: 70,
             ),
             Positioned(
-              top: 40,
+              top: 30,
               child: Container(
                 margin: const EdgeInsets.all(10),
                 child: Image.asset(
@@ -100,13 +151,14 @@ Widget buyButton(String foodId, String assetPath) {
               ),
             ),
             Positioned(
-              top: 40,
+              top: 20,
               left: 20,
               child: Container(
                 margin: const EdgeInsets.all(10),
                 child: Text(snapshot.data ?? '',
                   style: TextStyle(
-                      fontSize: 16,
+                      fontFamily: 'VT323',
+                      fontSize: 28,
                       color:Colors.white
                   ),
                 ), // Display fetched cost
@@ -139,14 +191,16 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       backgroundColor: Colors.transparent,
       child: Container(
+        height: 600,
+        width: 500,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/buttons/asset.png'),
-            fit: BoxFit.cover,
+            fit: BoxFit.fitHeight,
           ),
         ),
         child: DefaultTabController(
@@ -171,7 +225,10 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
                         const SizedBox(width: 8),
                         const Text(
                           'Closet',
-                          style: TextStyle(fontSize: 22),
+                          style: TextStyle(
+                            fontFamily: 'VT323',  // Apply the VT323 font
+                            fontSize: 32,
+                          ),
                         ),
                       ],
                     ),
@@ -182,7 +239,10 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
                       children: [
                         const Text(
                           'Shop',
-                          style: TextStyle(fontSize: 22),
+                          style: TextStyle(
+                            fontFamily: 'VT323',  // Apply the VT323 font
+                            fontSize: 32,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Image.asset(
@@ -195,7 +255,7 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 140.0),
               // Tab bar view for Closet and Shop
               Expanded(
                 child: TabBarView(
@@ -219,20 +279,36 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
       stream: db.loadInventoryItemsDB(userID),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
+          // Loading state positioned near the top-left
+          return Padding(
+            padding: const EdgeInsets.only(top: 20, left: 20),
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          // Error state aligned to the top-left
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Error: ${snapshot.error}',
+              style: const TextStyle(fontSize: 16, color: Colors.red),
+            ),
+          );
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
+          // Empty state aligned to the top-left
+          return Padding(
+            padding: const EdgeInsets.all(120.0),
             child: Text(
               'Your closet is empty.',
-              style: TextStyle(fontSize: 20, color: Colors.white),
+              style: const TextStyle(
+                  fontSize: 28,
+                  color: Colors.white,
+                  fontFamily: 'VT323',
+              ),
             ),
           );
         }
 
+        // Main content when data is available
         final items = snapshot.data!;
         return SingleChildScrollView(
           child: Wrap(
@@ -280,27 +356,77 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return AlertDialog(
-                    title: Text('Use Item'),
-                    content: Text(
-                      'Do you want to use this item? This will add $replenish health for your Tomo. Current Health: ${pet
-                          .health}',
+                  return Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context), // Cancel
-                        child: Text('Cancel'),
+                    backgroundColor: Colors.transparent,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(color: Colors.white, width: 2),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context); // Close the dialog
-                          db.useItemDB(userID,
-                              itemID); // Use the item (decrease quantity)
-                          pet.feed(replenish);
-                        },
-                        child: Text('Confirm'),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Use Item',
+                            style: TextStyle(
+                              fontFamily: 'VT323',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Do you want to use this item? This will add $replenish health for your Tomo. Current Health: ${pet
+                                .health}',
+                            style: const TextStyle(
+                              fontFamily: 'VT323',  // Apply the VT323 font
+                              fontSize: 24,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    fontFamily: 'VT323',
+                                    color: Colors.white,
+                                    fontSize: 26,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  db.useItemDB(userID, itemID);
+                                  pet.feed(replenish);
+                                },
+                                child: const Text(
+                                  'Confirm',
+                                  style: TextStyle(
+                                    fontFamily: 'VT323',
+                                    color: Colors.white,
+                                    fontSize: 26,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   );
                 },
               );
@@ -308,45 +434,101 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return AlertDialog(
-                    title: Text('Out of Stock'),
-                    content: Text('This item is out of stock.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context), // OK
-                        child: Text('OK'),
+                  return Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    backgroundColor: Colors.transparent,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(color: Colors.white, width: 2),
                       ),
-                    ],
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Out of Stock',
+                            style: TextStyle(
+                              fontFamily: 'VT323',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'This item is out of stock.',
+                            style: TextStyle(
+                              fontFamily: 'VT323',
+                              fontSize: 26,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          Center(
+                            child: TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'OK',
+                                style: TextStyle(
+                                  fontFamily: 'VT323',
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               );
             }
           },
-          child: Image.asset(
-            assetPath,
-            height: 70,
-            width: 70,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Image of the item
+              Image.asset(
+                assetPath,
+                height: 70,
+                width: 70,
+              ),
+              // Positioned Quantity
+              FutureBuilder<Map<String, dynamic>>(
+                future: db.getItemInfoDB(userID, itemID),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox.shrink(); // Empty space while loading
+                  }
+                  if (snapshot.hasError) {
+                    return const SizedBox.shrink(); // Empty space on error
+                  }
+
+                  final quantity = snapshot.data?['quantity'] ?? 0;
+                  return Positioned(
+                    bottom: 1,
+                    right: 15,// Position the number below the image
+                    child: Text(
+                      '$quantity' "x",
+                      style: const TextStyle(
+                        fontFamily: 'VT323',  // Apply the VT323 font
+                        fontSize: 26, // Large font size
+                        fontWeight: FontWeight.w900, // Heavier bold text
+                        color: Colors.white, // White color
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ),
-        FutureBuilder<Map<String, dynamic>>(
-          future: db.getItemInfoDB(userID, itemID),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('Loading...',
-                  style: TextStyle(fontSize: 16, color: Colors.white));
-            }
-            if (snapshot.hasError) {
-              return Text(
-                  'Error', style: TextStyle(fontSize: 16, color: Colors.red));
-            }
-
-            final quantity = snapshot.data?['quantity'] ?? 0;
-
-            return Text(
-              'Quantity: $quantity',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            );
-          },
         ),
       ],
     );

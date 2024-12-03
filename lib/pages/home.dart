@@ -331,23 +331,33 @@ class HomeState extends State<Home>
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Column(
+                              mainAxisSize: MainAxisSize.min,  // Ensure the Column only takes as much space as needed
                               children: [
-                                StreamBuilder<String>(
-                                  stream: db.showCoins(loggedUserID),
-                                  // Listen to the stream for real-time updates
-                                  builder: (context, snapshot) {
-                                    // if (snapshot.connectionState ==
-                                    //     ConnectionState.waiting) {
-                                    //   return CircularProgressIndicator(); // Show loading indicator while waiting for the result
-                                    // }
-                                    return Text(
-                                        '${snapshot.data}'); // Display the coins when data is available
-                                  },
-                                ),
                                 Image.asset(
                                   'assets/buttons/coin.png',
-                                  height: 45,
+                                  height: 40,
                                   fit: BoxFit.contain,
+                                ),
+                                SizedBox(height: 2), // Adds space between the coin image and the number
+                                StreamBuilder<String>(
+                                  stream: db.showCoins(loggedUserID),
+                                  builder: (context, snapshot) {
+                                    // Handle connection state, and data availability
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return CircularProgressIndicator(); // Loading indicator
+                                    }
+
+                                    // Display the coins when data is available
+                                    return Text(
+                                      '${snapshot.data}', // Display the coin number
+                                      style: TextStyle(
+                                        fontFamily: 'VT323', // Apply the VT323 font
+                                        fontSize: 24,        // Set font size
+                                        fontWeight: FontWeight.bold, // Bold text
+                                        color: Colors.white, // Text color
+                                      ),
+                                    );
+                                  },
                                 ),
                                 GestureDetector(
                                   onTap: () {
@@ -361,30 +371,27 @@ class HomeState extends State<Home>
                                 GestureDetector(
                                   onTap: () {
                                     showDialog(
-                                      context:
-                                          context, // Ensure this is the correct context
+                                      context: context, // Ensure this is the correct context
                                       barrierDismissible: true,
                                       builder: (BuildContext context) {
-                                        return ClosetShopDialog(
-                                            userID: loggedUserID);
+                                        return ClosetShopDialog(userID: loggedUserID);
                                       },
                                     );
                                   },
                                   child: SizedBox(
                                     width: 60,
-                                    height: 60,
+                                       height: 60,
                                     child: Image.asset(
                                       'assets/buttons/briefcase.png',
                                     ),
                                   ),
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
                     ),
-
                     // Tasks list widget
                     Positioned(
                       bottom: 100, // Adjust based on UI requirements
@@ -482,7 +489,9 @@ class HomeState extends State<Home>
                                           '+$_coinValue',
                                           style: const TextStyle(
                                               fontSize: 20,
-                                              color: Colors.orange),
+                                              color: Colors.orange,
+                                              fontFamily: 'VT323',
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -512,7 +521,7 @@ class HomeState extends State<Home>
           ),
           backgroundColor: Colors.transparent, // Transparent background
           child: Container(
-            height: 250, // Height of the popup
+            height: 350, // Height of the popup
             margin: const EdgeInsets.symmetric(horizontal: 20),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -527,11 +536,12 @@ class HomeState extends State<Home>
                   "New Task",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 23,
+                    fontSize: 30,
+                    fontFamily: 'VT323',
                     color: Colors.white, // Text color for visibility
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 15),
                 const Text(
                   "Enter task title:",
                   style: TextStyle(

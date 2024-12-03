@@ -53,7 +53,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500, // Adjusted height to make the dialog longer
+      height: 550, // Adjusted height to make the dialog longer
       margin: const EdgeInsets.symmetric(horizontal: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -68,7 +68,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
             "Settings",
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 23,
+              fontSize: 32,
+              fontFamily: 'VT323',
               color: Colors.white, // Text color for visibility
             ),
           ),
@@ -76,8 +77,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
           const Text(
             "Adjust the settings below:",
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 28,
               color: Colors.white,
+              fontFamily: 'VT323',
             ),
             textAlign: TextAlign.center,
           ),
@@ -92,7 +94,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   // Master Volume
                   const Text(
                     "Master Volume",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontFamily: 'VT323',
+                    ),
                   ),
                   Slider(
                     value: masterVolume,
@@ -107,7 +113,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   // Background Music Volume
                   const Text(
                     "Background Music Volume",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontFamily: 'VT323',
+                    ),
                   ),
                   Slider(
                     value: bgmVolume,
@@ -122,7 +132,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   // Sound Effects Volume
                   const Text(
                     "Sound Effects Volume",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontFamily: 'VT323',
+                    ),
                   ),
                   Slider(
                     value: sfxVolume,
@@ -149,8 +163,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 child: const Text(
                   "Close",
                   style: TextStyle(
+                    fontFamily: 'VT323',
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 26,
                   ),
                 ),
               ),
