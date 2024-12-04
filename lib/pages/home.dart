@@ -274,8 +274,8 @@ class HomeState extends State<Home>
                                     Navigator.pushNamed(context, '/focus');
                                   },
                                   child: SizedBox(
-                                    width: 60,
-                                    height: 60,
+                                    width: 100,
+                                    height: 100,
                                     child: Image.asset(
                                       'assets/buttons/focusbtn.png',
                                       fit: BoxFit.contain,
@@ -299,7 +299,8 @@ class HomeState extends State<Home>
                                   ),
                                 )
                               ],
-                            )
+                            ),
+                            // SizedBox(height: 10,),
                           ]),
                     ),
                     Container(
