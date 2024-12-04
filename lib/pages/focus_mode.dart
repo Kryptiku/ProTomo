@@ -353,9 +353,6 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
   }
 
   void startTimer() {
-    setState(() {
-      buttonVisibility = false;
-    });
     AudioService.startFocusFx();
     if (timerValue == 0) {
       // Show snackbar when trying to start with zero time
@@ -373,11 +370,16 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
       );
       return;
     }
+    else {
+      setState(() {
+        buttonVisibility = false;
+      });
+    }
 
     startScreenPinning();
     setState(() {
       buttonState = 'stop.png';
-      countdownSeconds = timerValue; // Convert to seconds
+      countdownSeconds = timerValue * 60; // Convert to seconds
       isCountingDown = true; // Start the countdown
     });
 
