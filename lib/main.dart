@@ -23,11 +23,11 @@ void main() async {
       child: MaterialApp(
         home: AuthCheck(),
         routes: {
+          '/start': (context) => StartPage(),
           '/home': (context) => Home(),
           '/focus': (context) => TimerKnob(),
           '/login': (context) => LoginPage(),
           '/register': (context) => RegisterScreen(),
-          '/start': (context) => StartPage(),
         },
       ),
     ),
@@ -43,7 +43,7 @@ class AuthCheck extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasData) {
-          return Home();
+          return StartPage();
         } else {
           return LoginPage();
         }

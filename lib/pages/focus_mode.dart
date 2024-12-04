@@ -46,7 +46,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
   int countdownSeconds = 0; // Total countdown seconds
   Timer? countdownTimer; // Timer instance for countdown
   bool isCountingDown = false; // Flag to check if countdown is active
-  String buttonState = 'start.png';
+  String buttonState = 'focusStart.png';
   bool buttonVisibility = true;
 
   final int maxMinutes = 180; // Maximum timer value
@@ -246,14 +246,6 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                               width: 100,
                               height: 100,
                             ),
-                            // child: SizedBox(
-                            //   width: 100,
-                            //   height: 100,
-                            //   child: Image.asset(
-                            //     'assets/buttons/$buttonState',
-                            //     fit: BoxFit.contain,
-                            //   ),
-                            // ),
                           ),
                         ],
                       ),
@@ -348,6 +340,8 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
     );
   }
 
+
+
   int calculateCoins(int minutes) {
     return (minutes ~/5) * 3 ;
   }
@@ -404,6 +398,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
     });
   }
 
+
   void stopTimer() {
     AudioService.stopTimeFx();
     showDialog(
@@ -431,7 +426,8 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                   "Stop Focus Mode?",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 23,
+                    fontSize: 28,
+                    fontFamily: 'VT323',
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
@@ -441,7 +437,8 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                 const Text(
                   "Are you sure you want to stop focus mode?",
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 24,
+                    fontFamily: 'VT323',
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
@@ -467,7 +464,8 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                         "No",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
+                          fontFamily: 'VT323',
+                          fontSize: 26,
                         ),
                       ),
                     ),
@@ -489,7 +487,8 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                         "Yes",
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 18,
+                          fontFamily: 'VT323',
+                          fontSize: 26,
                         ),
                       ),
                     ),
@@ -507,7 +506,7 @@ void timerStopped() {
     stopScreenPinning();
     setState(() {
       isCountingDown = false;
-      buttonState = 'start.png';
+      buttonState = 'focusStart.png';
       countdownTimer?.cancel();
       timerValue = 0;
       angle = -pi / 2;
@@ -515,6 +514,8 @@ void timerStopped() {
     });
 
   }
+
+
 
   @override
   void dispose() {

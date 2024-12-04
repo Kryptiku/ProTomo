@@ -45,8 +45,8 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/main_bg.png'),
-                  fit: BoxFit.cover,
+                  image: AssetImage('assets/chill.png'),
+                  fit: BoxFit.fill,
                   alignment: Alignment(0.5, 0),
                 ),
               ),
