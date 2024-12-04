@@ -19,8 +19,15 @@ int taskReward = 5;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlameAudio.audioCache
-      .loadAll(['sample_bg_music.mp3', 'button_press.wav', 'coin.wav', 'popup_no.wav', 'popup_yes.wav', 'start_focus.wav', 'stop_time.wav']);
+  await FlameAudio.audioCache.loadAll([
+    'sample_bg_music.mp3',
+    'button_press.wav',
+    'coin.wav',
+    'popup_no.wav',
+    'popup_yes.wav',
+    'start_focus.wav',
+    'stop_time.wav'
+  ]);
   runApp(const Home());
 }
 
@@ -145,17 +152,6 @@ class HomeState extends State<Home>
     }
   } // void
 
-  void feedPet(int replenish) {
-    pet.feed(replenish);
-    print("feedPet function called, $replenish");
-  }
-
-  void _cleanTank() {
-    setState(() {
-      pet.cleanTank();
-    });
-  }
-
   Stream<int> getTasksLimitStream() async* {
     while (true) {
       final completedToday = await db.getCompletedTasksTodayDB(loggedUserID);
@@ -254,9 +250,74 @@ class HomeState extends State<Home>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 GestureDetector(
-                                  onTap: () {
-                                    print('clean');
-                                    pet.cleanTank();
+                                  onTap: () async {
+                                    final userID =
+                                        loggedUserID; // Replace with actual user ID or context value
+                                    final userCoins =
+                                        await db.getUserCoins(userID);
+
+                                    // Check if user has enough coins
+                                    if (userCoins >= 10 && pet.tankLevel > 0) {
+                                      // Show confirmation dialog
+                                      bool? shouldProceed =
+                                          await showDialog<bool>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title:
+                                                Text("Confirm Tank Cleaning"),
+                                            content: Text(
+                                                "Do you want to spend 10 coins to clean the tank?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop(
+                                                      false); // Don't proceed
+                                                },
+                                                child: Text("Cancel"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  await db.useCleanerDB(
+                                                      userID); // Deduct coins
+                                                  final pet =
+                                                      context.read<PetState>();
+                                                  pet.cleanTank(); // Clean the tank
+                                                  Navigator.of(context).pop(
+                                                      true); // Proceed with cleaning
+                                                },
+                                                child: Text("Yes"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+
+                                      // Proceed with cleaning if the user confirmed
+                                      if (shouldProceed == true) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content:
+                                                  Text("Tank is now cleaner!")),
+                                        );
+                                      }
+                                    } else if (pet.tankLevel == 0) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content:
+                                                Text("Tank is already clean!")),
+                                      );
+                                    } else {
+                                      // Show a message if the user doesn't have enough coins
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                "You don't have enough coins!")),
+                                      );
+                                    }
                                   },
                                   child: SizedBox(
                                     width: 60.0,
@@ -336,19 +397,23 @@ class HomeState extends State<Home>
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Column(
-                              mainAxisSize: MainAxisSize.min,  // Ensure the Column only takes as much space as needed
+                              mainAxisSize: MainAxisSize
+                                  .min, // Ensure the Column only takes as much space as needed
                               children: [
                                 Image.asset(
                                   'assets/buttons/coin.png',
                                   height: 40,
                                   fit: BoxFit.contain,
                                 ),
-                                SizedBox(height: 2), // Adds space between the coin image and the number
+                                SizedBox(
+                                    height:
+                                        2), // Adds space between the coin image and the number
                                 StreamBuilder<String>(
                                   stream: db.showCoins(loggedUserID),
                                   builder: (context, snapshot) {
                                     // Handle connection state, and data availability
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
                                       return CircularProgressIndicator(); // Loading indicator
                                     }
 
@@ -356,9 +421,11 @@ class HomeState extends State<Home>
                                     return Text(
                                       '${snapshot.data}', // Display the coin number
                                       style: TextStyle(
-                                        fontFamily: 'VT323', // Apply the VT323 font
-                                        fontSize: 24,        // Set font size
-                                        fontWeight: FontWeight.bold, // Bold text
+                                        fontFamily:
+                                            'VT323', // Apply the VT323 font
+                                        fontSize: 24, // Set font size
+                                        fontWeight:
+                                            FontWeight.bold, // Bold text
                                         color: Colors.white, // Text color
                                       ),
                                     );
@@ -377,16 +444,18 @@ class HomeState extends State<Home>
                                   onTap: () {
                                     AudioService.buttonPressFx();
                                     showDialog(
-                                      context: context, // Ensure this is the correct context
+                                      context:
+                                          context, // Ensure this is the correct context
                                       barrierDismissible: true,
                                       builder: (BuildContext context) {
-                                        return ClosetShopDialog(userID: loggedUserID);
+                                        return ClosetShopDialog(
+                                            userID: loggedUserID);
                                       },
                                     );
                                   },
                                   child: SizedBox(
                                     width: 60,
-                                       height: 60,
+                                    height: 60,
                                     child: Image.asset(
                                       'assets/buttons/briefcase.png',
                                     ),
@@ -494,9 +563,9 @@ class HomeState extends State<Home>
                                         Text(
                                           '+$_coinValue',
                                           style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.orange,
-                                              fontFamily: 'VT323',
+                                            fontSize: 20,
+                                            color: Colors.orange,
+                                            fontFamily: 'VT323',
                                           ),
                                         ),
                                       ],
@@ -571,8 +640,7 @@ class HomeState extends State<Home>
                   style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'VT323',
-                      fontSize: 18
-                  ), // Text color inside the field
+                      fontSize: 18), // Text color inside the field
                 ),
                 const SizedBox(height: 20),
                 Row(
