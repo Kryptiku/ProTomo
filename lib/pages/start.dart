@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/audio_service.dart';
-import 'package:protomo/pages/settings.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -18,7 +17,7 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1), // Blinking duration
+      duration: const Duration(seconds: 1),
     )..repeat(reverse: true);
 
     _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(_controller);
@@ -42,17 +41,33 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
         child: Stack(
           children: [
             // Background Image
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/chill.png'),
-                  fit: BoxFit.fill,
-                  alignment: Alignment(0.5, 0),
+            Positioned.fill(
+              child: Image.asset(
+                'assets/startBg.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Gradient Overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0.4),
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
                 ),
               ),
             ),
-            // Blinking Text
-            Center(
+            // Centered Logo
+            Positioned(
+              bottom: 50,
+              left: 0,
+              right: 0,
               child: AnimatedBuilder(
                 animation: _opacityAnimation,
                 builder: (context, child) {
@@ -60,15 +75,17 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
                     opacity: _opacityAnimation.value,
                     child: Text(
                       'Press anywhere to start',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 28,
+                        fontFamily: 'VT323',
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         shadows: [
                           Shadow(
                             blurRadius: 10.0,
                             color: Colors.black,
-                            offset: Offset(2.0, 2.0),
+                            offset: Offset(3.0, 3.0),
                           ),
                         ],
                       ),

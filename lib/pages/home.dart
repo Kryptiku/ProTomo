@@ -231,7 +231,7 @@ class HomeState extends State<Home>
                               style: TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'VT323',
-                                  fontSize: 20),
+                                  fontSize: 22),
                             ),
                             SizedBox(height: 4),
                             Text(
@@ -239,7 +239,7 @@ class HomeState extends State<Home>
                               style: TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'VT323',
-                                  fontSize: 20),
+                                  fontSize: 22),
                             ),
                           ],
                         ),
@@ -262,8 +262,8 @@ class HomeState extends State<Home>
                                     width: 60.0,
                                     height: 60.0,
                                     child: Image.asset(
-                                      'assets/buttons/tankCleaner.png',
-                                      fit: BoxFit.fill,
+                                      'assets/buttons/spray.png',
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 ),
@@ -331,7 +331,7 @@ class HomeState extends State<Home>
                     ),
                     Container(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
+                        padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -343,7 +343,6 @@ class HomeState extends State<Home>
                                   height: 40,
                                   fit: BoxFit.contain,
                                 ),
-                                SizedBox(height: 2), // Adds space between the coin image and the number
                                 StreamBuilder<String>(
                                   stream: db.showCoins(loggedUserID),
                                   builder: (context, snapshot) {
@@ -357,7 +356,7 @@ class HomeState extends State<Home>
                                       '${snapshot.data}', // Display the coin number
                                       style: TextStyle(
                                         fontFamily: 'VT323', // Apply the VT323 font
-                                        fontSize: 24,        // Set font size
+                                        fontSize: 30,        // Set font size
                                         fontWeight: FontWeight.bold, // Bold text
                                         color: Colors.white, // Text color
                                       ),
@@ -434,7 +433,7 @@ class HomeState extends State<Home>
                                         "Tasks $tasksLimit/5",
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 30,
+                                          fontSize: 32,
                                           fontFamily: 'VT323',
                                         ),
                                       ),
@@ -494,7 +493,7 @@ class HomeState extends State<Home>
                                         Text(
                                           '+$_coinValue',
                                           style: const TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 22,
                                               color: Colors.orange,
                                               fontFamily: 'VT323',
                                           ),
@@ -542,7 +541,7 @@ class HomeState extends State<Home>
                   "New Task",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 30,
+                    fontSize: 32,
                     fontFamily: 'VT323',
                     color: Colors.white, // Text color for visibility
                   ),
