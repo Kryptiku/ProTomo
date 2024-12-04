@@ -332,7 +332,7 @@ class HomeState extends State<Home>
                                   onTap: () {
                                     AudioService.startFocusFx();
                                     print('Start Timer');
-                                    Navigator.pushNamed(context, '/focus');
+                                    Navigator.pushReplacementNamed(context, '/focus');
                                   },
                                   child: SizedBox(
                                     width: 100,

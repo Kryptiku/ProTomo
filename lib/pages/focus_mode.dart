@@ -265,7 +265,8 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                       if (buttonVisibility)
                         GestureDetector(
                           onTap: (){
-                            Navigator.pop(context);
+                            AudioService.buttonPressFx();
+                            Navigator.pushReplacementNamed(context, '/home');
                           },
                           child: SizedBox(
                             width: 50,
