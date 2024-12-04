@@ -163,7 +163,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                               imagePath: 'assets/big_bubble.png',
                               width: radius * 3,
                               height: radius * 3,
-                              bobbingDistance: 20,
+                              bobbingDistance: 10,
                               bobbingDuration: 6,
                               rotationDuration: 200,
                               clockwise: false,
