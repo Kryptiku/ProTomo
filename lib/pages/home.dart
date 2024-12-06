@@ -561,8 +561,8 @@ class HomeState extends State<Home>
                                         Text(
                                           '+$_coinValue',
                                           style: const TextStyle(
-                                              fontSize: 22,
-                                              color: Colors.orange,
+                                              fontSize: 32,
+                                              color: Colors.white,
                                               fontFamily: 'VT323',
                                           ),
                                         ),
@@ -746,6 +746,7 @@ class CustomTaskTile extends StatelessWidget {
       trailing: Checkbox(
         value: task.isDone,
         onChanged: (_) => onToggle(),
+        side: BorderSide(color: Colors.white70, width: 2),
         activeColor: Colors.redAccent,
       ),
     );

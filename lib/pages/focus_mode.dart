@@ -111,7 +111,38 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                 ),
               ),
             ),
-            Center(
+
+    Stack(
+      children: [
+      Positioned(
+        top: 260, // Adjust the vertical position
+        left: MediaQuery.of(context).size.width / 2 - 40, // Center horizontally
+        child: Row(
+          mainAxisSize: MainAxisSize.min, // Shrink to fit content
+          crossAxisAlignment: CrossAxisAlignment.center, // Center-align items
+          children: [
+            Text(
+              '+$coinsAwarded',
+              style: const TextStyle(
+                fontSize: 38,
+                fontFamily: 'VT323',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+              const SizedBox(width: 2), // Spacing between text and image
+              Image.asset(
+                'assets/buttons/coin.png',
+                width: 44,
+                height: 44,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+
+    Center(
               child: Stack(
                 children: [
                   GestureDetector(
@@ -205,25 +236,6 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            '+$coinsAwarded',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.yellow,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            width: 5,
-                            ),
-                          Image.asset(
-                            'assets/buttons/coin.png',
-                            width: 44,
-                            height: 44,
-                          ),
                         ],
                       ),
                       // Display timer countdown
@@ -322,7 +334,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                         Text(
                           '+$coinsAwarded',
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 30,
                             color: Colors.orange,
                             fontFamily: 'VT323',
                           ),
@@ -372,7 +384,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
 
     startScreenPinning();
     setState(() {
-      buttonState = 'stop.png';
+      buttonState = 'focusStop.png';
       countdownSeconds = timerValue * 60; // Convert to seconds
       isCountingDown = true; // Start the countdown
     });
