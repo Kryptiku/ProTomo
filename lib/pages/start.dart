@@ -34,7 +34,7 @@ class _StartPageState extends State<StartPage> with SingleTickerProviderStateMix
     return Scaffold(
       body: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/home');
+          Navigator.pushReplacementNamed(context, '/home');
           AudioService.buttonPressFx();
           AudioService.playBackgroundMusic();
         },
