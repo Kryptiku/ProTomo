@@ -293,7 +293,7 @@ class HomeState extends State<Home>
 
                                                   // Content
                                                   Text(
-                                                    "Do you want to spend 10 coins to clean the tank?",
+                                                    "Do you want to spend 5 coins to clean the tank?",
                                                     style: const TextStyle(
                                                       fontFamily: 'VT323',
                                                       fontSize: 24,

@@ -73,7 +73,7 @@ class FirestoreService {
     final int userCoins = await getUserCoins(userID);
 
     await db.collection('users').doc(userID).update({
-      'coins': userCoins - 10,
+      'coins': userCoins - 5,
     });
   }
 
