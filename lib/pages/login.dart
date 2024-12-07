@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:protomo/pages/home.dart';
+import 'package:protomo/pages/forgot_password.dart';
 import 'package:protomo/pages/register.dart';
 
 class LoginPage extends StatelessWidget {
@@ -199,6 +200,30 @@ class LoginPage extends StatelessWidget {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ForgotPasswordScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Forgot Password?",
+                      style: TextStyle(
+                        fontFamily: 'VT323',
+                        fontSize: 18,
+                        color: Colors.blueAccent,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
             ],
           ),
         ),
