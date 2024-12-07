@@ -259,39 +259,108 @@ class HomeState extends State<Home>
                                     // Check if user has enough coins
                                     if (userCoins >= 10 && pet.tankLevel > 0) {
                                       // Show confirmation dialog
-                                      bool? shouldProceed =
-                                          await showDialog<bool>(
+                                      bool? shouldProceed = await showDialog<bool>(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title:
-                                                Text("Confirm Tank Cleaning"),
-                                            content: Text(
-                                                "Do you want to spend 10 coins to clean the tank?"),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop(
-                                                      false); // Don't proceed
-                                                },
-                                                child: Text("Cancel"),
+                                          return Dialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(12.0),
+                                            ),
+                                            backgroundColor: Colors.transparent,
+                                            child: Container(
+                                              margin: const EdgeInsets.symmetric(horizontal: 20),
+                                              padding: const EdgeInsets.all(16),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black54,
+                                                borderRadius: BorderRadius.circular(12.0),
+                                                border: Border.all(color: Colors.white, width: 2),
                                               ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  await db.useCleanerDB(
-                                                      userID); // Deduct coins
-                                                  final pet =
-                                                      context.read<PetState>();
-                                                  pet.cleanTank(); // Clean the tank
-                                                  Navigator.of(context).pop(
-                                                      true); // Proceed with cleaning
-                                                },
-                                                child: Text("Yes"),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  // Title
+                                                  Text(
+                                                    "Confirm Tank Cleaning",
+                                                    style: const TextStyle(
+                                                      fontFamily: 'VT323',
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 28,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  const SizedBox(height: 16),
+
+                                                  // Content
+                                                  Text(
+                                                    "Do you want to spend 10 coins to clean the tank?",
+                                                    style: const TextStyle(
+                                                      fontFamily: 'VT323',
+                                                      fontSize: 24,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  const SizedBox(height: 20),
+
+                                                  // Buttons
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: [
+                                                      // Cancel Button
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop(false); // Don't proceed
+                                                        },
+                                                        style: TextButton.styleFrom(
+                                                          padding: const EdgeInsets.symmetric(
+                                                              horizontal: 24, vertical: 12),
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "Cancel",
+                                                          style: TextStyle(
+                                                            fontFamily: 'VT323',
+                                                            fontSize: 22,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      // Confirm Button
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          await db.useCleanerDB(userID); // Deduct coins
+                                                          final pet = context.read<PetState>();
+                                                          pet.cleanTank(); // Clean the tank
+                                                          Navigator.of(context).pop(true); // Proceed
+                                                        },
+                                                        style: TextButton.styleFrom(
+                                                          padding: const EdgeInsets.symmetric(
+                                                              horizontal: 24, vertical: 12),
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "Yes",
+                                                          style: TextStyle(
+                                                            fontFamily: 'VT323',
+                                                            fontSize: 22,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           );
                                         },
                                       );
+
 
                                       // Proceed with cleaning if the user confirmed
                                       if (shouldProceed == true) {
