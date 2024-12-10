@@ -23,7 +23,20 @@ class RegisterScreen extends StatelessWidget {
             .set({
           'coins': 100,
           'creationTime': FieldValue.serverTimestamp(),
+        })
+            .then((_) {
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .collection('inventory')
+              .doc('skin0')
+              .set({
+            'name': "Pink",
+            'path': "assets/axolotl/pinkfloating.png",
+            'type': "skin",
+          });
         });
+
 
         Navigator.pushReplacementNamed(context, '/login');
       } catch (e) {

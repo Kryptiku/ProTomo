@@ -1,7 +1,5 @@
-// history_page.dart
 import 'package:flutter/material.dart';
 import '../database_functions.dart';
-
 
 final db = FirestoreService();
 String loggedUserID = db.getCurrentUserId().toString();
@@ -27,18 +25,34 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Task History"),
-        backgroundColor: Colors.black,
+        title: const Text(
+          "Task History",
+          style: TextStyle(
+            fontFamily: 'VT323',
+            fontSize: 28,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.black54,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context); // Go back to the previous page
+          },
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<List<String>>(
           future: _completedTaskNamesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               // Show a loading indicator while data is being fetched.
               return const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: Colors.yellowAccent,
+                ),
               );
             } else if (snapshot.hasError) {
               // Handle errors gracefully.
@@ -48,7 +62,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   style: const TextStyle(
                     fontSize: 24,
                     fontFamily: 'VT323',
-                    color: Colors.red,
+                    color: Colors.redAccent,
                   ),
                 ),
               );
@@ -58,18 +72,33 @@ class _HistoryPageState extends State<HistoryPage> {
               return ListView.builder(
                 itemCount: completedTaskNames.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                      completedTaskNames[index],
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontFamily: 'VT323',
-                        color: Colors.white,
-                      ),
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(12.0),
+                      border: Border.all(color: Colors.white, width: 2),
                     ),
-                    trailing: const Icon(
-                      Icons.check_circle,
-                      color: Colors.greenAccent,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            completedTaskNames[index],
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontFamily: 'VT323',
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.check_circle,
+                          color: Colors.greenAccent,
+                          size: 30,
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -94,4 +123,3 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 }
-

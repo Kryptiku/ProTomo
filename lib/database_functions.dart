@@ -16,9 +16,9 @@ class FirestoreService {
 
       if (storeSnapshot.exists) {
         // Retrieve the item's data
-        final Map<String, dynamic> itemData =
-            storeSnapshot.data() as Map<String, dynamic>;
+        final Map<String, dynamic> itemData = storeSnapshot.data() as Map<String, dynamic>;
         final int cost = itemData['cost'];
+        final String type = itemData['type']; // Get the type of the item
 
         // Reference the user's document
         final userDoc = db.collection('users').doc(userID);
@@ -26,8 +26,7 @@ class FirestoreService {
 
         if (userSnapshot.exists) {
           // Retrieve user's current coins
-          final Map<String, dynamic> userData =
-              userSnapshot.data() as Map<String, dynamic>;
+          final Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
           final int currentCoins = userData['coins'];
 
           if (currentCoins >= cost) {
@@ -37,35 +36,40 @@ class FirestoreService {
             // Update user's coins in Firestore
             await userDoc.update({'coins': updatedCoins});
 
-            // Add the item to the user's inventory
-            final userInventoryDoc =
-                userDoc.collection('inventory').doc(foodId);
-            final bool itemExists = (await userInventoryDoc.get()).exists;
+            if (type == 'skin') {
+              // For 'skin' type, check if it exists in the user's inventory
+              final userInventoryDoc = userDoc.collection('inventory').doc(
+                  foodId);
+              final bool itemExists = (await userInventoryDoc.get()).exists;
 
-            if (itemExists) {
-              await userInventoryDoc
-                  .update({'quantity': FieldValue.increment(1)});
+              if (!itemExists) {
+                // If it doesn't exist in the inventory, copy the store doc to inventory
+                await userInventoryDoc.set(
+                    itemData); // Add skin to the inventory
+              }
             } else {
-              // Copy all fields from the store item and add 'quantity'
-              final Map<String, dynamic> newItemData =
-                  Map<String, dynamic>.from(itemData);
-              newItemData['quantity'] =
-                  1; // Add quantity field for the user's inventory
-              await userInventoryDoc.set(newItemData);
-            }
+              // For other items, manage quantity
+              final userInventoryDoc = userDoc.collection('inventory').doc(
+                  foodId);
+              final bool itemExists = (await userInventoryDoc.get()).exists;
 
-            print("Item bought successfully!");
-          } else {
-            print("Not enough coins to buy this item!");
+              if (itemExists) {
+                // Update quantity if the item already exists in the inventory
+                await userInventoryDoc.update(
+                    {'quantity': FieldValue.increment(1)});
+              } else {
+                // Add new item to inventory with quantity 1
+                final Map<String, dynamic> newItemData = Map<String,
+                    dynamic>.from(itemData);
+                newItemData['quantity'] = 1; // Set initial quantity to 1
+                await userInventoryDoc.set(newItemData);
+              }
+            }
           }
-        } else {
-          print("User document not found!");
         }
-      } else {
-        print("Item document not found!");
       }
     } catch (e) {
-      print("Error occurred: $e");
+      print('Error buying item: $e');
     }
   }
 
