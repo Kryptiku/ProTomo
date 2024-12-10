@@ -1,4 +1,3 @@
-import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:protomo/pages/audio_service.dart';
@@ -9,10 +8,12 @@ import 'package:protomo/pages/settings.dart';
 import 'package:protomo/pet_state.dart';
 import 'package:protomo/dirtiness_overlay.dart';
 import 'package:provider/provider.dart';
+import '../skin_state.dart';
 import 'history.dart';
 import 'dart:math' as math;
 
 final db = FirestoreService();
+
 
 String loggedUserID = db.getCurrentUserId().toString();
 int taskReward = 5;
@@ -41,7 +42,7 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   final pet = PetState();
-  late Future<List<String>> _tasksNamesFuture;
+  // late Future<List<String>> _tasksNamesFuture;
 
   //Coins Animation Params
   final int _coinValue = 5; //placeholder value
@@ -169,6 +170,7 @@ class HomeState extends State<Home>
   @override
   Widget build(BuildContext context) {
     final pet = context.watch<PetState>();
+    final defaultSkin = context.watch<SkinState>().defaultSkin; // Watch the current state
 
     return StreamBuilder<List<String>>(
       stream: _taskStream, // Stream to get real-time updates
@@ -197,7 +199,7 @@ class HomeState extends State<Home>
                     ),
                     Center(
                       child: BobbingRotatingImage(
-                        imagePath: "assets/axolotl/pinkfloating.png",
+                        imagePath: defaultSkin,
                         bobbingDistance: 40.0,
                         bobbingDuration: 5,
                         rotationDuration: 50,

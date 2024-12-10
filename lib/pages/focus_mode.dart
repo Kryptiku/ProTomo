@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:protomo/pages/audio_service.dart';
 import 'package:protomo/database_functions.dart';
 
+import 'closet.dart';
+
 String loggedUserID = db.getCurrentUserId().toString();
 final db = FirestoreService();
 
@@ -161,7 +163,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                         alignment: Alignment.center,
                         children: [
                           BobbingRotatingImage(
-                            imagePath: 'assets/axolotl/pinkfloating.png',
+                            imagePath: defaultSkin,
                             bobbingDistance: 20.0,
                             bobbingDuration: 7,
                             rotationDuration: 50,

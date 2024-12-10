@@ -323,15 +323,19 @@ class FirestoreService {
       if (itemSnapshot.exists) {
         final itemData = itemSnapshot.data();
         return {
-          "quantity": itemData?['quantity'] as int,
-          "replenish": itemData?['replenish'] as int,
+          "quantity": itemData?['quantity'] as int? ?? 0,
+          "replenish": itemData?['replenish'] as int? ?? 0,
+          "type": itemData?['type'] as String? ?? "", // Default to empty string
+          "path": itemData?['path'] as String ?? "",
         };
+
       } else {
         // If the document doesn't exist, return default or empty values
         print('Item not found: $itemID');
         return {
           "quantity": 0,
           "replenish": 0,
+          "type": "", // Default value for "type"
         };
       }
     } catch (e) {
@@ -340,9 +344,11 @@ class FirestoreService {
       return {
         "quantity": 0, // Default value in case of error
         "replenish": 0, // Default value in case of error
+        "type": "", // Default value for "type"
       };
     }
   }
+
 
   Future<void> useItemDB(String userID, String itemID) async {
     final itemRef =

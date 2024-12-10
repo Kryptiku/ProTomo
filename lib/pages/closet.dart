@@ -3,10 +3,12 @@ import 'package:protomo/database_functions.dart';
 import 'package:protomo/pages/home.dart';
 import 'package:provider/provider.dart';
 import '../pet_state.dart';
+import '../skin_state.dart';
 
 
 final db = FirestoreService();
 final pet = PetState();
+String defaultSkin = 'assets/axolotl/pinkfloating.png';
 String loggedUserID = db.getCurrentUserId().toString();
 
 Widget buyButton(String foodId, String assetPath) {
@@ -372,6 +374,8 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
         children: [
           buyButton('food1', 'assets/buttons/chicken.png'),
           buyButton('meds1', 'assets/buttons/medicine.png'),
+          buyButton('skin1', 'assets/axolotl/Blue-Axolotl.png'),
+          buyButton('skin2', 'assets/axolotl/Yellow-Axolotl.png'),
         ],
       ),
     );
@@ -388,55 +392,218 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
             final itemInfo = await db.getItemInfoDB(userID, itemID);
             final quantity = itemInfo?['quantity'] ?? 0;
             final replenish = itemInfo?['replenish'] ?? 0;
+            final itemtype = itemInfo?['type'] ?? 'consumable';
+            final assetPath = itemInfo?['path'];
+            print("ITEM TYPE: $itemtype");
 
-            if (quantity > 0) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    backgroundColor: Colors.transparent,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
+            if (itemtype == 'skin'){
+
+              if (quantity > 0) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
-                        border: Border.all(color: Colors.white, width: 2),
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Use Item',
-                            style: TextStyle(
-                              fontFamily: 'VT323',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28,
-                              color: Colors.white,
+                      backgroundColor: Colors.transparent,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(12.0),
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Use Item',
+                              style: TextStyle(
+                                fontFamily: 'VT323',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Do you want to use this item? This will add $replenish health for your Tomo. Current Health: ${pet
-                                .health}',
-                            style: const TextStyle(
-                              fontFamily: 'VT323',  // Apply the VT323 font
-                              fontSize: 24,
-                              color: Colors.white,
+                            const SizedBox(height: 16),
+                            Text(
+                              'Do you want to equip this skin?',
+                              style: const TextStyle(
+                                fontFamily: 'VT323', // Apply the VT323 font
+                                fontSize: 24,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              TextButton(
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text(
+                                    'No',
+                                    style: TextStyle(
+                                      fontFamily: 'VT323',
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      context.read<SkinState>().updateSkin(assetPath); // Update the skin
+                                      print(defaultSkin);
+                                    });
+                                    print('skin changed');
+                                  },
+                                  child: const Text(
+                                    'Confirm',
+                                    style: TextStyle(
+                                      fontFamily: 'VT323',
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+            }
+            else {
+              if (quantity > 0) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(12.0),
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Use Item',
+                              style: TextStyle(
+                                fontFamily: 'VT323',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Do you want to use this item? This will add $replenish health for your Tomo. Current Health: ${pet
+                                  .health}',
+                              style: const TextStyle(
+                                fontFamily: 'VT323', // Apply the VT323 font
+                                fontSize: 24,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      fontFamily: 'VT323',
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    db.useItemDB(userID, itemID);
+                                    pet.feed(replenish);
+                                  },
+                                  child: const Text(
+                                    'Confirm',
+                                    style: TextStyle(
+                                      fontFamily: 'VT323',
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(12.0),
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Out of Stock',
+                              style: TextStyle(
+                                fontFamily: 'VT323',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'This item is out of stock.',
+                              style: TextStyle(
+                                fontFamily: 'VT323',
+                                fontSize: 26,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 20),
+                            Center(
+                              child: TextButton(
                                 onPressed: () => Navigator.pop(context),
                                 child: const Text(
-                                  'Cancel',
+                                  'OK',
                                   style: TextStyle(
                                     fontFamily: 'VT323',
                                     color: Colors.white,
@@ -444,89 +611,15 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
                                   ),
                                 ),
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  db.useItemDB(userID, itemID);
-                                  pet.feed(replenish);
-                                },
-                                child: const Text(
-                                  'Confirm',
-                                  style: TextStyle(
-                                    fontFamily: 'VT323',
-                                    color: Colors.white,
-                                    fontSize: 26,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              );
-            } else {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    backgroundColor: Colors.transparent,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(12.0),
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Out of Stock',
-                            style: TextStyle(
-                              fontFamily: 'VT323',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28,
-                              color: Colors.white,
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'This item is out of stock.',
-                            style: TextStyle(
-                              fontFamily: 'VT323',
-                              fontSize: 26,
-                              color: Colors.white,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 20),
-                          Center(
-                            child: TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text(
-                                'OK',
-                                style: TextStyle(
-                                  fontFamily: 'VT323',
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            }
+                    );
+                  },
+                );
+              } // else quantity
+            } // else consumable
           },
           child: Stack(
             alignment: Alignment.center,
