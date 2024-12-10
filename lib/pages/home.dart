@@ -257,7 +257,7 @@ class HomeState extends State<Home>
                                         await db.getUserCoins(userID);
 
                                     // Check if user has enough coins
-                                    if (userCoins >= 10 && pet.tankLevel > 0) {
+                                    if (userCoins >= 5 && pet.tankLevel > 0) {
                                       // Show confirmation dialog
                                       bool? shouldProceed = await showDialog<bool>(
                                         context: context,
