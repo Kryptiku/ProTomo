@@ -1,4 +1,3 @@
-// Fully Layout Focus Mode
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
@@ -6,6 +5,8 @@ import 'package:protomo/animations.dart';
 import 'package:flutter/services.dart';
 import 'package:protomo/pages/audio_service.dart';
 import 'package:protomo/database_functions.dart';
+import 'package:provider/provider.dart';
+import '../skin_state.dart';
 
 String loggedUserID = db.getCurrentUserId().toString();
 final db = FirestoreService();
@@ -112,81 +113,66 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
               ),
             ),
 
-    Stack(
-      children: [
-      Positioned(
-        top: 260, // Adjust the vertical position
-        left: MediaQuery.of(context).size.width / 2 - 40, // Center horizontally
-        child: Row(
-          mainAxisSize: MainAxisSize.min, // Shrink to fit content
-          crossAxisAlignment: CrossAxisAlignment.center, // Center-align items
-          children: [
-            Text(
-              '+$coinsAwarded',
-              style: const TextStyle(
-                fontSize: 38,
-                fontFamily: 'VT323',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+            Stack(
+              children: [
+                Positioned(
+                  top: 260, // Adjust the vertical position
+                  left: MediaQuery.of(context).size.width / 2 - 40, // Center horizontally
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min, // Shrink to fit content
+                    crossAxisAlignment: CrossAxisAlignment.center, // Center-align items
+                    children: [
+                      Text(
+                        '+$coinsAwarded',
+                        style: const TextStyle(
+                          fontSize: 38,
+                          fontFamily: 'VT323',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 2), // Spacing between text and image
+                      Image.asset(
+                        'assets/buttons/coin.png',
+                        width: 44,
+                        height: 44,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-              const SizedBox(width: 2), // Spacing between text and image
-              Image.asset(
-                'assets/buttons/coin.png',
-                width: 44,
-                height: 44,
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
 
-    Center(
+            Center(
               child: Stack(
                 children: [
                   GestureDetector(
                     onPanUpdate: (details) {
-                      if (isCountingDown) return; // Prevent adjustment during countdown
-
-                      // Calculate the angle based on drag position
-                      Offset position = details.localPosition - Offset(radius, radius);
-                      double newAngle = atan2(position.dy, position.dx);
-
-                      // Normalize angle to [0, 2π] and clamp to valid range
-                      if (newAngle < -pi / 2) {
-                        newAngle += 2 * pi;
+                      if (!isCountingDown) {
+                        updateAngle(details.localPosition, radius + orbitOffset);
                       }
-
-                      // Calculate new timer value based on the new angle
-                      double normalizedAngle = (newAngle + pi / 2) / (2 * pi); // Adjust for top start
-                      int newTimerValue = (normalizedAngle * maxMinutes).round();
-
-                      // Ensure timer value respects the increment, max limit, and does not go below 0
-                      // Fix minor bug with small bubble being able to rotate more than 360 degrees
-                      timerValue = (newTimerValue ~/ increment) * increment;
-                      // timerValue = timerValue.clamp(0, maxMinutes);
-
-                      // Set the angle for the small circle
-                      angle = (timerValue / maxMinutes.toDouble()) * (2 * pi) - (pi / 2); // Adjust angle based on timer value
 
                       coinsAwarded = calculateCoins(timerValue);
                       // Update the state to reflect the changes
                       setState(() {});
                     },
                     child: Container(
-                      width: (radius + orbitOffset) * 3,
-                      height: (radius + orbitOffset) * 3,
+                      width: (radius + orbitOffset) * 2,
+                      height: (radius + orbitOffset) * 2,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          BobbingRotatingImage(
-                            imagePath: 'assets/axolotl/pinkfloating.png',
-                            bobbingDistance: 20.0,
-                            bobbingDuration: 7,
-                            rotationDuration: 50,
-                            width: 200,
-                            height: 200,
+                          Consumer<SkinState>(
+                            builder: (context, skinState, child) {
+                              return BobbingRotatingImage(
+                                imagePath: skinState.defaultSkin,
+                                bobbingDistance: 20.0,
+                                bobbingDuration: 7,
+                                rotationDuration: 50,
+                                width: 200,
+                                height: 200,
+                              );
+                            },
                           ),
                           Opacity(
                             opacity: 0.6,
@@ -199,13 +185,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                               rotationDuration: 200,
                               clockwise: false,
                             ),
-                            // child: Image.asset(
-                            //   'assets/big_bubble.png', // Path to your larger PNG image
-                            //   width: radius * 3,
-                            //   height: radius * 3,
-                            // ),
                           ),
-
 
                           // Small orbiting circle with custom image
                           Transform.translate(
@@ -353,7 +333,31 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
     );
   }
 
+  void updateAngle(Offset position, double totalRadius) {
+    final center = Offset(totalRadius, totalRadius);
+    final touchPosition = position - center;
+    double newAngle = atan2(touchPosition.dy, touchPosition.dx);
 
+    // Normalize angle to [0, 2π]
+    if (newAngle < 0) {
+      newAngle += 2 * pi;
+    }
+
+    // Calculate new timer value based on the new angle
+    double normalizedAngle = (newAngle + pi / 2) / (2 * pi);
+    if (normalizedAngle >= 1) normalizedAngle -= 1;
+    int newTimerValue = (normalizedAngle * maxMinutes).round();
+
+    // Ensure timer value respects the increment and max limit
+    newTimerValue = (newTimerValue ~/ increment) * increment;
+    newTimerValue = newTimerValue.clamp(0, maxMinutes);
+
+    setState(() {
+      angle = newAngle;
+      timerValue = newTimerValue;
+      coinsAwarded = calculateCoins(newTimerValue);
+    });
+  }
 
   int calculateCoins(int minutes) {
     return (minutes ~/5) * 3 ;
@@ -515,7 +519,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
     );
   }
 
-void timerStopped() {
+  void timerStopped() {
     stopScreenPinning();
     setState(() {
       isCountingDown = false;
@@ -527,8 +531,6 @@ void timerStopped() {
     });
 
   }
-
-
 
   @override
   void dispose() {

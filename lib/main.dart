@@ -10,6 +10,7 @@ import 'package:protomo/pages/login.dart';
 import 'package:protomo/pages/register.dart';
 import 'package:protomo/pages/start.dart';
 import 'pet_state.dart';
+import 'skin_state.dart'; // Import the new SkinState class
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => PetState()),
+        ChangeNotifierProvider(create: (context) => SkinState()), // Add SkinState provider
       ],
       child: MaterialApp(
         home: AuthCheck(),
