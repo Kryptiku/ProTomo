@@ -8,70 +8,64 @@ class FirestoreService {
     return FirebaseAuth.instance.currentUser?.uid;
   }
 
-  Future<void> buyItem(String userID, String foodId) async {
+  Future<void> buyItem(String userID, String itemID) async {
     try {
       // Get the item document from the store collection
-      final storeItemDoc = db.collection('store').doc(foodId);
+      final storeItemDoc = db.collection('store').doc(itemID);
       final DocumentSnapshot storeSnapshot = await storeItemDoc.get();
 
-      if (storeSnapshot.exists) {
-        // Retrieve the item's data
-        final Map<String, dynamic> itemData = storeSnapshot.data() as Map<String, dynamic>;
-        final int cost = itemData['cost'];
-        final String type = itemData['type']; // Get the type of the item
+      // Retrieve the item's data
+      final Map<String, dynamic> itemData = storeSnapshot.data() as Map<String, dynamic>;
+      final int cost = itemData['cost'];
+      final String type = itemData['type']; // Get the type of the item
 
-        // Reference the user's document
-        final userDoc = db.collection('users').doc(userID);
-        final DocumentSnapshot userSnapshot = await userDoc.get();
+      // Reference the user's document
+      final userDoc = db.collection('users').doc(userID);
+      final DocumentSnapshot userSnapshot = await userDoc.get();
 
-        if (userSnapshot.exists) {
-          // Retrieve user's current coins
-          final Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
-          final int currentCoins = userData['coins'];
+      // Retrieve user's current coins
+      final Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+      final int currentCoins = userData['coins'];
 
-          if (currentCoins >= cost) {
-            // Deduct cost from user's coins
-            final int updatedCoins = currentCoins - cost;
+      // Perform operations based on item type without deducting coins initially
+      if (type == 'skin') {
+        // For 'skin' type, check if it exists in the user's inventory
+        final userInventoryDoc = userDoc.collection('inventory').doc(itemID);
+        final bool itemExists = (await userInventoryDoc.get()).exists;
 
-            // Update user's coins in Firestore
-            await userDoc.update({'coins': updatedCoins});
+        if (!itemExists) {
+          // If the skin is not owned, add it to the inventory
+          await userInventoryDoc.set(itemData);
+          // Deduct cost from user's coins only after successful operations
+          final int updatedCoins = currentCoins - cost;
+          await userDoc.update({'coins': updatedCoins});
+        }
 
-            if (type == 'skin') {
-              // For 'skin' type, check if it exists in the user's inventory
-              final userInventoryDoc = userDoc.collection('inventory').doc(
-                  foodId);
-              final bool itemExists = (await userInventoryDoc.get()).exists;
+      } else {
+        // For other items, manage quantity
+        final userInventoryDoc = userDoc.collection('inventory').doc(itemID);
+        final bool itemExists = (await userInventoryDoc.get()).exists;
+        // Deduct cost from user's coins only after successful operations
+        final int updatedCoins = currentCoins - cost;
+        await userDoc.update({'coins': updatedCoins});
 
-              if (!itemExists) {
-                // If it doesn't exist in the inventory, copy the store doc to inventory
-                await userInventoryDoc.set(
-                    itemData); // Add skin to the inventory
-              }
-            } else {
-              // For other items, manage quantity
-              final userInventoryDoc = userDoc.collection('inventory').doc(
-                  foodId);
-              final bool itemExists = (await userInventoryDoc.get()).exists;
-
-              if (itemExists) {
-                // Update quantity if the item already exists in the inventory
-                await userInventoryDoc.update(
-                    {'quantity': FieldValue.increment(1)});
-              } else {
-                // Add new item to inventory with quantity 1
-                final Map<String, dynamic> newItemData = Map<String,
-                    dynamic>.from(itemData);
-                newItemData['quantity'] = 1; // Set initial quantity to 1
-                await userInventoryDoc.set(newItemData);
-              }
-            }
-          }
+        if (itemExists) {
+          // Update quantity if the item already exists in the inventory
+          await userInventoryDoc.update({'quantity': FieldValue.increment(1)});
+        } else {
+          // Add new item to inventory with quantity 1
+          final Map<String, dynamic> newItemData = Map<String, dynamic>.from(itemData);
+          newItemData['quantity'] = 1; // Set initial quantity to 1
+          await userInventoryDoc.set(newItemData);
         }
       }
+
+
     } catch (e) {
       print('Error buying item: $e');
     }
   }
+
 
   Future<void> useCleanerDB(String userID) async {
     final int userCoins = await getUserCoins(userID);
@@ -98,9 +92,26 @@ class FirestoreService {
         .map((snapshot) => snapshot['coins'].toString());
   }
 
-  Future<String> getItemCost(String foodID) async {
-    final doc = await db.collection('store').doc(foodID).get();
+  Future<String> getItemCost(String itemID) async {
+    final doc = await db.collection('store').doc(itemID).get();
     return doc['cost'].toString();
+  }
+
+
+
+  Future<String> getItemType(String itemID) async {
+    final doc = await db.collection('store').doc(itemID).get();
+    return doc['type'].toString();
+  }
+
+  Future<bool> skinExistsInventory(String userID, String itemID) async {
+    final userInventoryDoc = db.collection('users').doc(userID).collection('inventory').doc(itemID);
+    bool itemExists = (await userInventoryDoc.get()).exists;
+
+    print("backend: $itemExists");
+    print("backend: $itemID");
+
+    return itemExists;
   }
 
   Future<void> addTaskDb(String userID, String taskName) async {

@@ -5,8 +5,8 @@ import 'package:protomo/animations.dart';
 import 'package:flutter/services.dart';
 import 'package:protomo/pages/audio_service.dart';
 import 'package:protomo/database_functions.dart';
-
-import 'closet.dart';
+import 'package:provider/provider.dart';
+import '../skin_state.dart';
 
 String loggedUserID = db.getCurrentUserId().toString();
 final db = FirestoreService();
@@ -162,13 +162,17 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          BobbingRotatingImage(
-                            imagePath: defaultSkin,
-                            bobbingDistance: 20.0,
-                            bobbingDuration: 7,
-                            rotationDuration: 50,
-                            width: 200,
-                            height: 200,
+                          Consumer<SkinState>(
+                            builder: (context, skinState, child) {
+                              return BobbingRotatingImage(
+                                imagePath: skinState.defaultSkin,
+                                bobbingDistance: 20.0,
+                                bobbingDuration: 7,
+                                rotationDuration: 50,
+                                width: 200,
+                                height: 200,
+                              );
+                            },
                           ),
                           Opacity(
                             opacity: 0.6,
@@ -527,7 +531,7 @@ class _TimerKnobState extends State<TimerKnob> with TickerProviderStateMixin{
     });
 
   }
-  
+
   @override
   void dispose() {
     countdownTimer?.cancel();
