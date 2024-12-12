@@ -8,36 +8,28 @@ class PetState extends ChangeNotifier {
 
   int _health = MAX_HEALTH;
   int _tankLevel = 0;
-  late Timer _timer;
-  Duration updateDuration = Duration(hours: 2); // Adjustable duration
+  // late Timer _timer;
+  // Duration updateDuration = Duration(minutes: 1); // Adjustable duration
 
   PetState() {
     _health = MAX_HEALTH;
     _tankLevel = 0;
-    _startTimer();
+    // _startTimer();
     _loadState();
   }
 
   int get health => _health;
   int get tankLevel => _tankLevel;
 
-  void _startTimer() {
-    _timer = Timer.periodic(updateDuration, (timer) {
-      _updateState();
-    });
-  }
+  // void _startTimer() {
+  //   _timer = Timer.periodic(updateDuration, (timer) {
+  //     _updateState();
+  //   });
+  // }
 
   void _updateState() {
-    if (_health > 0) {
-      _health -= _tankLevel == MAX_TANK_LEVEL ? 2 : 1;
-    }
-
-    if (_tankLevel < MAX_TANK_LEVEL) {
-      _tankLevel++;
-    }
-
+    _loadState(); // Load the latest state
     notifyListeners(); // Notify UI listeners of the change
-    _saveState();
   }
 
   void feed(int amount) {
@@ -58,7 +50,6 @@ class PetState extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _health = prefs.getInt('health') ?? MAX_HEALTH;
     _tankLevel = prefs.getInt('tankLevel') ?? 0;
-    notifyListeners(); // Notify UI listeners after loading
   }
 
   Future<void> _saveState() async {
@@ -67,8 +58,9 @@ class PetState extends ChangeNotifier {
     await prefs.setInt('tankLevel', _tankLevel);
   }
 
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
+// void dispose() {
+//   _timer.cancel();
+//   super.dispose();
+// }
 }
+

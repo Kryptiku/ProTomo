@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:protomo/database_functions.dart';
-import 'package:protomo/pages/home.dart';
 import 'package:provider/provider.dart';
 import '../pet_state.dart';
 import '../skin_state.dart';
@@ -589,10 +588,8 @@ class _ClosetShopDialogState extends State<ClosetShopDialog> {
                                   TextButton(
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      setState(() {
-                                        skinState.updateSkin(assetPath);
-                                      });
-                                      print('skin changed');
+                                      skinState.changeSkin(assetPath);
+                                      print('skin changed to $assetPath');
                                     },
                                     child: const Text(
                                       'Confirm',

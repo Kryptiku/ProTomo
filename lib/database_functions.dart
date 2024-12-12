@@ -39,6 +39,9 @@ class FirestoreService {
           // Deduct cost from user's coins only after successful operations
           final int updatedCoins = currentCoins - cost;
           await userDoc.update({'coins': updatedCoins});
+          final Map<String, dynamic> newItemData = Map<String, dynamic>.from(itemData);
+          newItemData['quantity'] = 1; // Set initial quantity to 1
+          await userInventoryDoc.set(newItemData);
         }
 
       } else {

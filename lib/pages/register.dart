@@ -34,6 +34,7 @@ class RegisterScreen extends StatelessWidget {
             'name': "Pink",
             'path': "assets/axolotl/pinkfloating.png",
             'type': "skin",
+            'quantity' : 1,
           });
         });
 

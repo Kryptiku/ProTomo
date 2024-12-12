@@ -38,6 +38,7 @@ dependencies:
   cloud_firestore: ^5.4.4
 #  cloud_firestore: any
   firebase_auth: ^5.3.1
+  workmanager: ^0.5.1
 #  firebase_auth: any
   shared_preferences: ^2.3.3
   flutter_screenutil: ^5.9.3
